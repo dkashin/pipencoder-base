@@ -1,4 +1,4 @@
-# Pipencoder
+## Pipencoder
 GUI and automation for media transcoding and streaming.
 
 - Create your custom pipelines using your favorite CLI media tools.
