@@ -1,0 +1,9 @@
+{
+  "description": "System preset", 
+  "abitrate": 128, 
+  "channels": 2, 
+  "sample_rate": 44100, 
+  "acodec": "libfdk_aac", 
+  "type": "audio", 
+  "name": "AAC LC 128"
+}

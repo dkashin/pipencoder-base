@@ -1,0 +1,57 @@
+
+  <div class="row">
+    <div class="col-xs-12">
+      <div class="panel panel-default">
+        <div class="panel-heading">Licensing
+          <span class="pull-right">
+            {{ LicenseInfo.account_email }}
+          </span>
+        </div>
+        <div class="panel-body">
+          <div class="row">
+            <div ng-if="LicenseInfo && !Node.Submit">
+              <div class="col-xs-5 col-md-3">
+                <p class="nowrap">
+                  <strong>Type: </strong>{{ LicenseInfo.type }}
+                </p>
+                <p class="nowrap"><strong>Status: </strong>
+                  <span ng-class="{ 'msg-ok': LicenseInfo.active, 'msg-err': !LicenseInfo.active }">{{ LicenseInfo.status }}</span>
+                </p>
+                <button type="button" ng-click="NodeService('activate')" class="btn btn-main btn-main-green btn-lic-deactivate" title="Update license" ng-show="LicenseInfo">Update</button>
+                <button type="button" ng-click="NodeService('deactivate')" class="btn btn-main btn-main-red btn-lic-deactivate" title="Deactivate license" ng-show="LicenseInfo">Remove</button>
+              </div>
+              <div class="col-xs-7 col-md-9">
+                <p class="nowrap">
+                  <strong>Node ID: </strong>{{ LicenseInfo.id }}
+                </p>
+                <p class="nowrap"><strong>Expire: </strong>{{ LicenseInfo.expire | date:'dd/MM/yyyy' }}</p>
+                <p class="nowrap"><strong>Limits: </strong>
+                  {{ LicenseInfo.limit_jobs_total == -1 ? 'Unlimited' : LicenseInfo.limit_jobs_total }} total jobs, {{ LicenseInfo.limit_jobs_active == -1 ? 'Unlimited' : LicenseInfo.limit_jobs_active }} active jobs
+                </p>
+              </div>
+            </div> <!-- LicenseInfo -->
+            <div ng-if="!LicenseInfo && !Node.Submit">
+              <form ng-submit="NodeService('auth')">
+                <div class="col-xs-12 col-sm-5 col-md-4 col-lg-3">
+                  <label for="NodeUser" class="control-label">Account e-mail</label>
+                  <input id="NodeUser" type="email" class="form-control input-xs" ng-model="Node.Data.account_email" placeholder="e-mail">
+                </div>
+                <div class="col-xs-12 col-sm-5 col-md-4 col-lg-3">
+                  <label for="NodePass" class="control-label">Account password</label>
+                  <input id="NodePass" type="password" autocomplete="off" class="form-control input-xs" ng-model="Node.Data.account_password" placeholder="password">
+                </div>
+                <div class="col-xs-2">
+                  <button type="submit" class="btn btn-main btn-main-green btn-lic-activate" title="Activate license" ng-disabled="!Node.Data.account_email || !Node.Data.account_password">Activate</button>
+                </div>
+              </form>
+            </div> <!-- License auth -->
+            <div ng-if="!LicenseInfo && Node.Submit" class="col-xs-6">
+              <div class="settings-working-small">
+                <i class="fa fa-cog fa-spin"></i>&nbspWorking...
+              </div>
+            </div> <!-- Working -->
+          </div> <!-- row -->
+        </div> <!-- panel-body -->
+      </div> <!-- panel panel-default -->
+    </div> <!-- col-xs-12 -->
+  </div> <!-- row -->

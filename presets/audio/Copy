@@ -1,0 +1,7 @@
+{
+  "type": "audio",
+  "name": "Stream copy",
+  "acodec": "copy",
+  "abitrate": null,
+  "description": "Stream copy, no encoding"
+}

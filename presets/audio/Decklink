@@ -1,0 +1,7 @@
+{
+  "channels": 2, 
+  "description": "Decklink system preset", 
+  "sample_rate": 48000, 
+  "name": "Decklink", 
+  "acodec": "pcm_s16le"
+}

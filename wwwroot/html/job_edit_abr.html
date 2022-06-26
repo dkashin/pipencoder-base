@@ -1,0 +1,70 @@
+
+<p class="edit-title-chapters">HLS ABR</p>
+<div class="row">
+  <div class="col-xs-12 col-sm-4 col-md-2">
+    <label class="control-label edit-title-options">
+      <input type="checkbox" ng-model="ActiveJob.job_data.hls_abr_active" ng-change="AssetsPreviewBuild(ActiveJob)">
+      ABR Active
+    </label>
+  </div>
+  <div class="col-xs-12 col-sm-5 col-md-4 col-lg-3" ng-show="ActiveJob.job_data.hls_abr_active">
+    <label class="control-label">ABR Server</label>
+    <select class="form-control select-xs" ng-model="ActiveJob.job_data.hls_abr_server" ng-options="srv.id as ( srv.name + ' (' + srv.ip + ')' ) for srv in Servers.List" ng-change="AssetsPreviewBuild(ActiveJob)">
+    </select>
+  </div>
+  <div class="col-xs-12 col-sm-4 col-md-3" ng-show="ActiveJob.job_data.hls_abr_active">
+    <label class="control-label">ABR Manifest</label>
+    <input type="text" class="form-control input-xs" placeholder="playlist name" ng-model="ActiveJob.job_data.hls_abr_list_name" ng-change="ABRPreviewBuild(ActiveJob)">
+  </div>
+  <div class="col-xs-12 col-sm-4 col-md-3" ng-show="ActiveJob.job_data.hls_abr_active">
+    <label class="control-label">ABR Base dir</label>
+    <input type="text" class="form-control input-xs" placeholder="ABR base dir" ng-model="ActiveJob.job_data.hls_abr_basename" ng-change="AssetsPreviewBuild(ActiveJob)">
+  </div>
+</div> <!-- row -->
+<div class="row" ng-show="ActiveJob.job_data.hls_abr_active">
+  <div class="col-xs-12 abr-stream-list">
+    <div ng-hide="MetadataAssets.ABR[0]">
+      <h4>No HLS assets are available</h4>
+    </div>
+    <div ng-show="MetadataAssets.ABR[0]">
+      <table>
+        <thead>
+          <tr>
+            <th></th>
+            <th>METADATA: </th>
+            <th>BANDWIDTH</th>
+            <th>RESOLUTION</th>
+            <th>CODECS</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="row-select" ng-repeat="Asset in MetadataAssets.ABR track by $index">
+            <td class="checkbox-select">
+              <span>
+                <input type="checkbox" ng-model="ActiveJob.profile[Asset.Profile].target[Asset.Target].hls_abr_asset">
+              </span>
+            </td>
+            <td ng-click="ABRManifestSelect(Asset)">
+              {{ Asset.Manifest }}
+            </td>
+            <td>
+              <div>
+                <input type="number" min="1024" class="form-control input-xs" placeholder="bytes" ng-model="ActiveJob.profile[Asset.Profile].target[Asset.Target].hls_abr_bandwidth" ng-disabled="!ActiveJob.profile[Asset.Profile].target[Asset.Target].hls_abr_asset">
+              </div>
+            </td>
+            <td>
+              <div>
+                <input type="text" class="form-control input-xs" placeholder="[width]x[height]" ng-model="ActiveJob.profile[Asset.Profile].target[Asset.Target].hls_abr_resolution" ng-disabled="!ActiveJob.profile[Asset.Profile].target[Asset.Target].hls_abr_asset">
+              </div>
+            </td>
+            <td>
+              <div>
+                <input type="text" class="form-control input-xs" placeholder="codec id" ng-model="ActiveJob.profile[Asset.Profile].target[Asset.Target].hls_abr_codecs" ng-disabled="!ActiveJob.profile[Asset.Profile].target[Asset.Target].hls_abr_asset">
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div> <!-- row -->

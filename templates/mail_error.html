@@ -1,0 +1,59 @@
+<html>
+  <head>
+    <strong>HOST:</strong> {{ info.host }}
+    <style media="screen" type="text/css">
+    table {
+      font-family: Times;
+      font-size: 13px;
+      border-collapse: separate;
+      border-spacing: 0;
+    }
+    thead {
+      background-color: #888;
+      color: #fff;
+      font-size: 12px;
+      text-transform: uppercase;
+      font-family: "Lato","Helvetica Neue",Helvetica,Arial,sans-serif;
+    }
+    th, td {
+      text-align: center;
+      padding: 7px;
+      border-top: 0;
+      font-weight: normal;
+    }
+    td {
+      border-bottom: 1px solid #cecfd5;
+      word-wrap: break-word;
+    }
+    tbody tr:nth-child(even) {
+      background-color: #f0f0f0;
+    }
+    </style>
+  </head>
+  <body>
+    <p>Following error(s) detected:</p>
+    <table>
+      <thead>
+        <th>Time</th>
+        <th>ID</th>
+        <th>Job name</th>
+        <th>Source</th>
+        <th>Target</th>
+        <th>Status</th>
+      </thead>
+      <tbody>
+        {% for i in info.report | sort(attribute = 'check_time') %}
+        <tr>
+          <td>{{ i.check_time }}</td>
+          <td>{{ i.id }} / {{ i.sid }}</td>
+          <td>{{ i.name }} </td>
+          <td>{{ i.source + ' (' + i.source_active + ')' }}</td>
+          <td>{{ i.target }}</td>
+          <td style="color: #d9534f; font-weight: bold">{{ i.run_status }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    <p>Automatic report, please don't reply to this email.</p>
+  </body>
+</html>

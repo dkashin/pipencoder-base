@@ -1,0 +1,131 @@
+
+<p class="edit-title-chapters">Profiles</p>
+<div class="row edit-profile-select">
+  <div class="col-xs-6 col-sm-4 col-md-3">
+    <select class="form-control" ng-model="Profile.Active" ng-options="idx as ('Profile #' + idx) for (idx, profile) in ActiveJob.profile" ng-change="ProfileChange(Profile.Active)"></select>
+  </div> <!-- col-xs-6 col-sm-4 col-md-3 -->
+  <span ng-hide="Profile.DeleteConfirm">
+    <button type="button" ng-disabled="ActiveJob.profile.length <= 1" class="btn btn-main btn-main-red btn-tp glyphicon glyphicon-remove" title="Delete" ng-click="Profile.DeleteConfirm = true"></button>
+    <button type="button" class="btn btn-main btn-main-green btn-tp glyphicon glyphicon-plus" title="Add" ng-click="ProfileAdd(Profile.Active)"></button>
+  </span>
+  <span ng-show="Profile.DeleteConfirm">
+    <button type="button" class="btn btn-main btn-main-gray" title="Cancel" ng-click="Profile.DeleteConfirm = false">CANCEL</button>
+    <button type="button" class="btn btn-main btn-main-red" title="Delete" ng-click="ProfileDelete(Profile.Active)">DELETE</button>
+  </span>
+</div> <!-- row edit-profile-select -->
+<div class="row">
+  <div class="col-xs-12 col-sm-6">
+    <label>
+      <input type="checkbox" ng-model="Profile.Options[Profile.Active].EncoderActive.video" ng-click="ProfileEncoderSelect(Profile.Active, 'video')">
+      <p class="edit-title-encoders">Video encoder</p>
+    </label>
+    <p ng-hide="Profile.Options[Profile.Active].EncoderActive.video">Select <strong>video</strong> stream or input PID manually</p>
+    <div ng-show="Profile.Options[Profile.Active].EncoderActive.video">
+      <div class="row">
+        <div class="control-group">
+          <div class="col-xs-12 col-md-4" ng-repeat="PID in PIDMapping" ng-show="ShowProfilePID">
+            <label>{{ PID.SourceRole }} PID</label>
+            <input type="text" class="form-control input-xs" placeholder="#PID / Track" ng-model="ActiveJob.profile[Profile.Active][PID.dbName.video]" ng-disabled="!SourceActive[PID.SourceRole]" ng-change="PIDMapProfileToMIStreamList(Profile.Active)">
+          </div>
+        </div> <!-- control-group -->
+        <div class="control-group">
+          <div class="col-xs-12 col-md-6">
+            <label for="VProfile" class="control-label">Preset</label>
+            <select id="VProfile" class="form-control select-xs" ng-model="ActiveJob.profile[Profile.Active].vpreset" ng-options="pv.filename as pv.name for pv in Presets.video" ng-change="PresetSelect('video')"></select>
+          </div>
+        </div> <!-- control-group -->
+        <div class="control-group" ng-show="GPUOptionsShow && Profile.Options[Profile.Active].isGPUProfile">
+          <div class="col-xs-12 col-md-6">
+            <label for="GPUAssing" class="control-label">GPU Assign</label>
+            <select id="GPUAssing" class="form-control select-xs" ng-model="ActiveJob.profile[Profile.Active].nvenc_gpu" ng-options="GPU.ID as GPU.Name for GPU in GPUList"></select>
+          </div>
+        </div> <!-- control-group -->
+        <p class="col-xs-12 copy-codec-info" ng-show="ActiveJob.profile[Profile.Active].vpreset == 'Copy'">MediaInfo: {{ Profile.Stats.video }}</p>
+      </div> <!-- row -->
+      <div class="row" ng-hide="ActiveJob.profile[Profile.Active].vpreset == 'Copy'">
+        <div class="control-group">
+          <div class="col-xs-12" ng-class="{ 'col-md-6': Profile.Options[Profile.Active].vFilters.Scale.Value != 'Custom' }">
+            <label for="vFilterSize" class="control-label">Frame size</label>
+            <select id="vFilterSize" class="form-control select-xs" ng-model="Profile.Options[Profile.Active].vFilters.Scale.Value" ng-options="vpsize.value as vpsize.alias for vpsize in vFilterOptions.Scale | filter: '!ALL'" ng-change="ProfileCustomScaleSelect(Profile.Active)"></select>
+          </div>
+          <div ng-show="Profile.Options[Profile.Active].vFilters.Scale.Value == 'Custom'">
+            <div class="col-xs-6">
+              <label for="Width" class="control-label">Width</label>
+              <input id="Width" type="number" min="32" placeholder="pixels" class="form-control input-xs" ng-model="Profile.Options[Profile.Active].vFilters.Scale.Width" ng-change="ProfileCustomScaleSelect(Profile.Active)">
+            </div> <!-- col-xs-6 -->
+            <div class="col-xs-6">
+              <label for="Height" class="control-label">Height</label>
+              <input id="Height" type="number" min="32" placeholder="pixels" class="form-control input-xs" ng-model="Profile.Options[Profile.Active].vFilters.Scale.Height" ng-change="ProfileCustomScaleSelect(Profile.Active)">
+            </div> <!-- col-xs-6 -->
+          </div> <!-- vFilters.Scale.Value == 'Custom' -->
+          <div class="col-xs-12 col-sm-6">
+            <label for="label_deint" class="control-label">Deinterlace</label>
+            <select id="label_deint" class="form-control select-xs" ng-model="ActiveJob.profile[Profile.Active].venc_di" ng-options="deint.value as deint.alias for deint in vFilterOptions.Deinterlace | filter: '!ALL'" ng-change="ProfileCustomScaleSelect(Profile.Active)"></select>
+          </div> <!-- col-xs-12 col-sm-6 -->
+        </div> <!-- control-group -->
+      </div> <!-- row -->
+    </div> <!-- EncoderActive.video -->
+  </div> <!-- col-xs-12 col-sm-6 -->
+  <div class="col-xs-12 col-sm-6">
+    <label>
+      <input type="checkbox" ng-model="Profile.Options[Profile.Active].EncoderActive.audio" ng-click="ProfileEncoderSelect(Profile.Active, 'audio')">
+      <p class="edit-title-encoders">Audio encoder</p>
+    </label>
+    <p ng-hide="Profile.Options[Profile.Active].EncoderActive.audio">
+      Select <strong>audio</strong> stream or input PID manually
+    </p>
+    <div ng-show="Profile.Options[Profile.Active].EncoderActive.audio">
+      <div class="row">
+        <div class="control-group">
+          <div class="col-xs-12 col-md-4" ng-repeat="PID in PIDMapping" ng-show="ShowProfilePID">
+            <label>{{ PID.SourceRole }} PID</label>
+            <input type="text" class="form-control input-xs" placeholder="#PID / Track" ng-model="ActiveJob.profile[Profile.Active][PID.dbName.audio]" ng-disabled="!SourceActive[PID.SourceRole]" ng-change="PIDMapProfileToMIStreamList(Profile.Active)">
+          </div> <!-- col-xs-12 col-md-4 -->
+        </div> <!-- control-group -->
+        <div class="control-group">
+          <div class="col-xs-12 col-md-6">
+            <label for="AProfile" class="control-label">Preset</label>
+            <select id="AProfile" class="form-control select-xs" ng-model="ActiveJob.profile[Profile.Active].apreset" ng-options="pa.filename as pa.name for pa in Presets.audio" ng-change="PresetSelect('audio')"></select>
+          </div> <!-- col-xs-12 col-md-6 -->
+        </div> <!-- control-group -->
+        <p class="col-xs-12 copy-codec-info" ng-show="ActiveJob.profile[Profile.Active].apreset == 'Copy'">MediaInfo: {{ Profile.Stats.audio }}</p>
+      </div> <!-- row -->
+    </div> <!-- EncoderActive.audio -->
+  </div> <!-- col-xs-12 col-sm-6 -->
+  <div class="col-xs-12 col-sm-6" ng-show="ShowProfilePID">
+    <label>
+      <input type="checkbox" ng-model="Profile.Options[Profile.Active].EncoderActive.data" ng-click="ProfileEncoderSelect(Profile.Active, 'data')">
+      <p class="edit-title-encoders">Data encoder</p>
+    </label>
+    <p ng-hide="Profile.Options[Profile.Active].EncoderActive.data">
+      Select <strong>data</strong> stream or input PID manually
+    </p>
+    <div ng-show="Profile.Options[Profile.Active].EncoderActive.data">
+      <div class="row">
+        <div class="control-group">
+          <div class="col-xs-12 col-md-4" ng-repeat="PID in PIDMapping">
+            <label>{{ PID.SourceRole }} PID</label>
+            <input type="text" class="form-control input-xs" placeholder="#PID / Track" ng-model="ActiveJob.profile[Profile.Active][PID.dbName.data]" ng-disabled="!SourceActive[PID.SourceRole]" ng-change="PIDMapProfileToMIStreamList(Profile.Active)">
+          </div> <!-- col-xs-12 col-md-4 -->
+        </div> <!-- control-group -->
+        <div class="control-group">
+          <div class="col-xs-12 col-md-6">
+            <label for="dProfile" class="control-label">Preset</label>
+            <select id="dProfile" class="form-control select-xs" ng-model="ActiveJob.profile[Profile.Active].dpreset" ng-options="PD.name as PD.alias for PD in Presets.data"></select>
+          </div> <!-- col-xs-12 col-md-6 -->
+        </div> <!-- control-group -->
+      </div> <!-- row -->
+    </div> <!-- EncoderActive.data -->
+  </div> <!-- col-xs-12 col-sm-6 -->
+</div> <!-- row -->
+<div class="row">
+  <div class="edit-headline">
+    <span class="edit-headline-text">Mapping</span>
+  </div>
+  <div class="control-group">
+    <div class="col-xs-12 col-sm-6">
+      <label for="map_pids" class="control-label">PID(s) map</label>
+      <input id="map_pids" type="text" class="form-control input-xs" placeholder="-streamid <output stream index>:<new value>" ng-model="ActiveJob.profile[Profile.Active].stream_pids">
+    </div>
+  </div>
+</div> <!-- row -->

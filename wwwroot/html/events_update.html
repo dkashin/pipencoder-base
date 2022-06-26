@@ -1,0 +1,12 @@
+
+<div class="panel panel-success">
+	<div class="panel-heading centering-block">New software version is available: <strong>v.{{ Stats.Update.new_version }}</strong></div>
+	<div class="panel-body">
+	  <div class="row events-text centering-block">
+	    <button type="button" ng-click="SystemUpdateApply()" class="btn btn-main btn-main-green btn-sys-update" title="Update system" ng-hide="Stats.Update.Submit">Update now</button>
+	    <span ng-show="Stats.Update.Submit" class="update-loading">
+	      <i class="fa fa-cog fa-spin"></i>&nbsp&nbspUpdating...
+	    </span>
+	  </div>
+	</div>
+</div>

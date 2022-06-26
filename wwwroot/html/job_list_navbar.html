@@ -1,0 +1,110 @@
+
+<div class="row">
+  <form name="EditForm" ng-submit="JobDataSubmit(EditMode)">
+    <nav class="navbar navbar-default nav-custom" role="navigation">
+      <div>
+        <ul class="nav navbar-nav navbar-actions">
+          <li class="navbar-chapter hidden-xs logo-divider">{{ ChapterTitle }}</li>
+          <li class="navbar-glyphs" ng-class="{ 'nav-disabled': !LicenseInfo || !ContentLoaded || SubmitBlock }" ng-show="CurrentUser.isAdmin && !EditShow">
+            <a ng-click="LicenseInfo ? JobAddInit() : $event.stopPropagation()" href="">
+              <i class="fa fa-plus fa-2x"></i>
+              <div class="navbar-captions">New job</div>
+            </a>
+          </li>
+          <li class="navbar-glyphs" ng-class="{ 'nav-disabled': !LicenseInfo || !ContentLoaded || SubmitBlock }" ng-show="!EditShow">
+            <a ng-click="LicenseInfo ? JobStartStop([], 'start') : $event.stopPropagation()" href="">
+              <i class="fa fa-play-circle fa-2x"></i>
+              <div class="navbar-captions">Start all</div>
+            </a>
+          </li>
+          <li class="navbar-glyphs" ng-class="{ 'nav-disabled': !ContentLoaded || SubmitBlock }" ng-show="!EditShow">
+            <a ng-click="JobStartStop([], 'stop')" href="">
+              <i class="fa fa-stop-circle fa-2x">  </i>
+              <div class="navbar-captions">Stop all</div>
+            </a>
+          </li>
+          <li class="navbar-glyphs" ng-show="!EditShow">
+            <a ng-click="ScreenLayoutModeSet()" href="">
+              <i class="fa fa-2x" ng-class="{ 'fa-list-ul': GUI.Jobs.Layout.Mode == 'List', 'fa-tv': GUI.Jobs.Layout.Mode == 'Monitor' }"></i>
+              <div class="navbar-captions">{{ GUI.Jobs.Layout.Mode }}</div>
+            </a>
+          </li>
+          <li ng-show="!EditShow" class="navbar-glyphs" ng-class="{ 'nav-disabled': GUI.Jobs.Layout[GUI.Jobs.Layout.Mode].Index == 0, 'hidden-xs hidden-sm': GUI.Jobs.Layout.Mode == 'List' }"> <a ng-click="ScreenLayoutIndexSet('down')" href="">
+              <i class="fa fa-minus fa-2x"></i>
+              <div class="navbar-captions">Scale down</div>
+            </a>
+          </li>
+          <li ng-show="!EditShow" class="navbar-glyphs" ng-class="{ 'nav-disabled': GUI.Jobs.Layout[GUI.Jobs.Layout.Mode].Index == GUI.Jobs.Layout[GUI.Jobs.Layout.Mode].IndexMax, 'hidden-xs hidden-sm': GUI.Jobs.Layout.Mode == 'List' }"> <a ng-click="ScreenLayoutIndexSet('up')" href="">
+              <i class="fa fa-plus fa-2x"></i>
+              <div class="navbar-captions">Scale up</div>
+            </a>
+          </li>
+          <li class="navbar-glyphs" ng-show="!EditShow">
+            <a ng-click="JobFiltersShow()" href="">
+              <i class="fa fa-filter fa-2x"></i>
+              <div class="navbar-captions">Filters</div>
+            </a>
+          </li>
+          <li class="navbar-glyphs" ng-show="EditShow">
+            <a ng-click="JobEditCancel()" href="">
+              <i class="fa fa-arrow-left fa-2x"></i>
+              <div class="navbar-captions">Back</div>
+            </a>
+          </li>
+          <li class="navbar-glyphs" ng-show="EditShow" ng-class="{ 'nav-disabled': SubmitBlock || !LicenseInfo }">
+            <a ng-click="LicenseInfo && !SubmitBlock ? JobDataSubmit(EditMode) : $event.stopPropagation()" href="">
+              <i class="fa fa-check fa-2x"></i>
+              <div class="navbar-captions">Save</div>
+            </a>
+          </li>
+          <li class="navbar-glyphs" ng-show="EditShow && EditMode == 'update'">
+            <a ng-click="JobEditPrev()" ng-hide="SubmitBlock" href="">
+              <i class="fa fa-angle-double-left fa-2x"></i>
+              <div class="navbar-captions">Prev</div>
+            </a>
+          </li>
+          <li class="navbar-glyphs" ng-show="EditShow && EditMode == 'update'">
+            <a ng-click="JobEditNext()" ng-hide="SubmitBlock" href="">
+              <i class="fa fa-angle-double-right fa-2x"></i>
+              <div class="navbar-captions">Next</div>
+            </a>
+          </li>
+          <li class="navbar-glyphs" ng-show="EditShow">
+            <a ng-click="JobAddInit()" href="">
+              <i class="fa fa-undo fa-2x"></i>
+              <div class="navbar-captions">Reset</div>
+            </a>
+          </li>
+          <li class="navbar-glyphs" ng-show="EditShow && EditMode == 'update'">
+            <a ng-click="JobUpdateInit(CurrentIndex, true)" href="">
+              <i class="fa fa-clone fa-2x"></i>
+              <div class="navbar-captions">Duplicate</div>
+            </a>
+          </li>
+          <li ng-show="EditShow">
+            <span class="edit-settings-check" ng-show="EditMode == 'add'">
+              <input id="JobStartBox" type="checkbox" ng-model="EditSettings.JobStart">
+              <label for="JobStartBox" class="control-label">Start job</label>
+            </span>
+            <span class="edit-settings-check">
+              <input id="KeepOpenBox" type="checkbox" ng-model="EditSettings.KeepOpen" ng-click="EditSettings.SaveData = false">
+              <label for="KeepOpenBox" class="control-label">Keep open</label>
+            </span>
+            <span class="edit-settings-check" ng-show="EditMode == 'add' && EditSettings.KeepOpen">
+              <input id="SaveSetBox" type="checkbox" ng-model="EditSettings.SaveData">
+              <label for="SaveSetBox" class="control-label">Save settings</label>
+            </span>
+          </li>
+        </ul>
+        <div uib-alert ng-class="'alert-' + (Alert.type || 'warning')" class="alert-main" ng-repeat="Alert in AF.Queue track by $index" ng-show="Alert.action == 'jobs'" close="AF.Close($index)" dismiss-on-timeout="3000">{{ Alert.msg }}</div>
+      </div>
+    </nav>
+    <p ng-show="!ContentLoaded" class="navbar-loading">Loading content</p>
+    <p ng-show="SubmitBlock" class="navbar-loading">Working...</p>
+    <div ng-hide="ContentLoaded" class="content-loader">
+      <i class="fa fa-5x fa-cog fa-spin"></i>
+      <p>Please wait</p>
+    </div>
+    <div class="edit-form" ng-include="'/html/job_edit.html'" ng-if="EditShow"></div>
+  </form>
+</div> <!-- row -->

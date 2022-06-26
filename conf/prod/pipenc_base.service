@@ -1,0 +1,20 @@
+[Unit]
+Description=Pipencoder Service
+After=syslog.target
+
+[Service]
+User=pipencoder
+Group=pipencoder
+WorkingDirectory=/opt/pipencoder-base/app
+EnvironmentFile=/opt/pipencoder-base/conf/prod/default.env
+ExecStart=/opt/pipencoder-base/venv/bin/uwsgi -c ../conf/prod/pipenc_base_uwsgi.ini
+Restart=always
+KillSignal=SIGQUIT
+KillMode=process
+Type=idle
+StandardError=syslog
+NotifyAccess=all
+LimitNOFILE=64000
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,98 @@
+
+<nav class="navbar navbar-default nav-custom" role="navigation">
+  <div>
+    <p ng-show="!CurrentUser.isAdmin" class="navbar-loading logo-divider">{{ Chapters }}</p>
+    <ul class="nav navbar-nav navbar-actions" ng-show="ContentLoaded && !SubmitBlock">
+      <!-- <li class="hidden-xs logo-divider">/</li> -->
+      <li class="navbar-chapter hidden-xs logo-divider">{{ Chapters }}</li>
+      <li class="navbar-glyphs" ng-class="{ 'nav-disabled': SubmitBlock || !ContentLoaded || SettingsForm.$invalid }">
+        <a ng-click="!SubmitBlock && SettingsForm.$valid && SaveSettings()" href="">
+          <i class="fa fa-check fa-2x"></i>
+          <div class="navbar-captions">Save</div>
+        </a>
+      </li>
+      <li class="navbar-glyphs navbar-right">
+          <div class="navbar-captions"></div>
+      </li>
+      <li ng-hide="RebootConfirm" class="navbar-glyphs navbar-right" ng-init="RebootConfirm = false">
+        <a ng-click="RebootConfirm = true" href="">
+          <i class="fa fa-refresh fa-2x"></i>
+          <div class="navbar-captions">Server Reboot</div>
+        </a>
+      </li>
+      <li class="navbar-glyphs navbar-right">
+        <span ng-show="RebootConfirm">
+          <button type="button" class="btn btn-main btn-main-red" title="Reboot" ng-click="ServerReboot()">REBOOT</button>
+          <button type="button" class="btn btn-main btn-main-gray" title="Cancel" ng-click="RebootConfirm = false">CANCEL</button>
+        </span>
+      </li>
+      <li ng-hide="RebootConfirm" class="navbar-glyphs navbar-right" ng-init="RebootConfirm = false">
+        <a ng-click="AppRestart()" href="">
+          <i class="fa fa-spinner fa-2x"></i>
+          <div class="navbar-captions">App Restart</div>
+        </a>
+      </li>
+    </ul>
+    <div uib-alert ng-class="'alert-' + (Alert.type || 'warning')" class="alert-main" ng-repeat="Alert in AF.Queue track by $index" ng-show="Alert.action == 'settings'" close="AF.Close($index)" dismiss-on-timeout="300000">{{ Alert.msg }}</div>
+  </div>
+</nav>
+<div class="row">
+  <div class="col-xs-12">
+    <div>
+      <p ng-show="!ContentLoaded && CurrentUser.isAdmin" class="navbar-loading">Loading content</p>
+      <p ng-show="SubmitBlock" class="navbar-loading">Working...</p>
+    </div>
+    <div ng-show="!CurrentUser.isAdmin" class="content-loader">
+      <p>Access denied for current user</p>
+    </div>
+    <div ng-show="!ContentLoaded && CurrentUser.isAdmin" class="content-loader">
+      <i class="fa fa-5x fa-cog fa-spin"></i>
+      <p>Please wait</p>
+    </div>
+  </div>
+</div>
+<div ng-show="ContentLoaded">
+  <div class="row">
+    <div class="col-xs-12">
+      <div ng-include="'/html/settings_lic.html'"></div>
+    </div>
+  </div> <!-- row -->
+  <div class="row">
+    <div class="col-xs-12">
+      <div ng-include="'/html/settings_user.html'" ng-if="UsersList"></div>
+    </div>
+  </div> <!-- row -->
+  <div class="row">
+    <div class="col-xs-12">
+      <div ng-include="'/html/settings_server.html'" ng-if="Server.List"></div>
+    </div>
+  </div> <!-- row -->
+  <div class="row">
+    <div class="col-xs-12">
+      <div ng-include="'/html/settings_preset.html'" ng-if="AVPresets"></div>
+    </div>
+  </div> <!-- row -->
+  <div class="row">
+    <div class="col-xs-12">
+      <form name="SettingsForm" ng-submit="SaveSettings()">
+        <div class="panel panel-default">
+          <div class="panel-heading">Settings</div>
+          <div class="row">
+            <div class="settings-box">
+              <span class="settings-box-title">Callback</span>
+            </div>
+            <div class="control-group">
+              <div class="col-xs-12 col-sm-12 col-md-5">
+                <label for="CallbackURL">URL</label>
+                <input id="CallbackURL" type="url" class="form-control input-xs" placeholder="URL" ng-model="Settings.callback_url">
+              </div>
+            </div>
+          </div> <!-- row -->
+          <div ng-include="'/html/settings_failover.html'" ng-if="Settings"></div>
+          <div ng-include="'/html/settings_mail.html'" ng-if="Settings"></div>
+          <div ng-include="'/html/settings_alarm.html'" ng-if="Settings"></div>
+        </div> <!-- panel-default -->
+      </form>
+    </div> <!-- col-xs-12 -->
+  </div> <!-- row -->
+</div> <!-- content-wrap -->

@@ -1,0 +1,48 @@
+
+<div class="modal-content">
+
+  <div class="modal-header">
+    <button type="button" class="close" ng-click="ModalClose()"><span>&times;</span></button>
+    <h3 class="modal-title">Job: {{ JobName ? JobName: 'noname' }} (ID: {{ JobID }})</h3>
+  </div>
+
+  <div class="modal-body">
+    <div class="control-group">
+      <div class="col-xs-12">
+        <div class="row col-xs-6">
+          <div class="input-group input-group-sm log-btn-reload">
+            <span class="input-group-addon">Events:</span>
+            <input class="form-control input-xs" type="number" min="1" placeholder="integer" ng-model="Content.Events">
+            <span class="input-group-btn">
+              <button type="button" class="btn btn-sm btn-success" ng-click="ContentReload()"><span class="glyphicon glyphicon-refresh"></span>&nbsp&nbspReload</button>
+            </span>
+          </div>
+        </div>
+        <div class="col-xs-6">
+          <div class="log-btn-reload">
+            <input id="CheckAR" type="checkbox" ng-click="AutoReloadCheck()">
+            <label for="CheckAR" class="control-label">Auto reload</label>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="control-group">
+      <div class="col-xs-12 log-frame">
+        <ul class="nav nav-tabs nav-justified">
+        <!--
+          <li role="presentation" ><a href="#">System</a></li>
+        -->
+          <li role="presentation" ng-class="{ 'active': Content.Type == 'log' }" ng-click="ContentTypeSelector('log')" ng-show="LogList"><a href="#">Log</a></li>
+          <li role="presentation" ng-class="{ 'active': Content.Type == 'manifest' }" ng-click="ContentTypeSelector('manifest')" ng-show="HLSManifestList[0]"><a href="#">Manifest</a></li>
+        </ul>
+        <select class="form-control" ng-model="Content.Selected" ng-options="List as List.alias for List in Content.List" ng-change="ContentReload()"></select>
+        <textarea ng-show="Content.Type == 'log'" class="form-control log-display" rows="20" cols="40" ng-model="Content.Data" readonly show-tail="isScrolledBottom" when-scrolled="GetLog()"></textarea>
+        <textarea ng-show="Content.Type == 'manifest'" class="form-control log-display" rows="20" cols="40" ng-model="Content.Data" readonly show-tail="isScrolledBottom"></textarea>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-footer">
+  </div>
+
+</div>

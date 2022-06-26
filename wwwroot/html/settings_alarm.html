@@ -1,0 +1,66 @@
+
+<div class="row">
+  <div class="settings-box">
+    <span class="settings-box-title">Alarms</span>
+  </div>
+</div> <!-- row -->
+<div class="row settings-bottom-div">
+  <div class="control-group">
+    <div class="col-xs-12">
+      <input id="ErrorAlarm" type="checkbox" ng-model="Settings.alarm_error">
+      <label for="ErrorAlarm" class="control-label">Error</label>
+    </div>
+    <div class="col-xs-12 col-sm-6 col-lg-5">
+      <label for="ErrorEmail" class="control-label">Error email group</label>
+      <input id="ErrorEmail" type="text" class="form-control input-xs" placeholder="comma separated emails" ng-model="Settings.alarm_error_email" ng-disabled="!Settings.alarm_error || Settings.alarm_master">
+    </div>
+      <div class="col-xs-12 col-sm-6 col-lg-3">
+        <label for="ErrorSubj" class="control-label">Error email subject</label>
+        <input id="ErrorSubj" type="text" class="form-control input-xs" placeholder="subject" ng-model="Settings.alarm_error_subject" ng-disabled="!Settings.alarm_error || Settings.alarm_master">
+      </div>
+      <div class="col-xs-6 col-sm-2 col-lg-1">
+        <label for="ErrorValue" class="control-label">Value</label>
+        <input id="ErrorValue" type="number" min="0" class="form-control input-xs" placeholder="integer" ng-model="Settings.alarm_error_value" ng-disabled="!Settings.alarm_error">
+      </div>
+      <div class="col-xs-6 col-sm-3 col-md-2">
+        <label for="ErrorPeriod" class="control-label">Period</label>
+        <select id="ErrorPeriod" class="form-control select-xs" ng-model="Settings.alarm_error_period" ng-options="period.value as period.alias for period in AlarmPeriodList" ng-disabled="!Settings.alarm_error"></select>
+      </div>
+  </div>
+</div> <!-- row -->
+<div class="row settings-bottom-div">
+  <div class="control-group">
+    <div class="col-xs-12">
+      <input id="ActionAlarm" type="checkbox" ng-model="Settings.alarm_action">
+      <label for="ActionAlarm" class="control-label">Action</label>
+    </div>
+    <div class="col-xs-12 col-sm-6 col-lg-5">
+      <label for="ActionGrp" class="control-label">Action email group</label>
+      <input id="ActionGrp" type="text" class="form-control input-xs" placeholder="comma separated emails" ng-model="Settings.alarm_action_email" ng-disabled="!Settings.alarm_action || Settings.alarm_master">
+    </div>
+    <div class="col-xs-12 col-sm-6 col-md-4 col-lg-3">
+      <label for="ActionSubj" class="control-label">Action email subject</label>
+      <input id="ActionSubj" type="text" class="form-control input-xs" placeholder="subject" ng-model="Settings.alarm_action_subject" ng-disabled="!Settings.alarm_action || Settings.alarm_master">
+    </div>
+    <div class="col-xs-6 col-sm-2 col-lg-1">
+      <label for="ActionCount" class="control-label">Count</label>
+      <input id="ActionCount" type="number" min="1" class="form-control input-xs" placeholder="integer" ng-model="Settings.alarm_action_count" ng-disabled="!Settings.alarm_action">
+    </div>
+  </div>
+</div> <!-- row -->
+<div class="row settings-bottom-div">
+  <div class="control-group">
+    <div class="col-xs-12">
+      <input id="MasterAlarm" type="checkbox" ng-model="Settings.alarm_master">
+      <label for="MasterAlarm" class="control-label">Master</label>
+    </div>
+    <div class="col-xs-12 col-sm-6 col-lg-5">
+      <label for="MasterEmail" class="control-label">Master email group</label>
+      <input id="MasterEmail" type="text" class="form-control input-xs" placeholder="comma separated emails" ng-model="Settings.alarm_master_email" ng-disabled="!Settings.alarm_master || (!Settings.alarm_master && (Settings.alarm_error || Settings.alarm_action))">
+    </div>
+    <div class="col-xs-12 col-sm-6 col-md-4 col-lg-3">
+      <label for="MasterSubj" class="control-label">Master email subject</label>
+      <input id="MasterSubj" type="text" class="form-control input-xs" placeholder="subject" ng-model="Settings.alarm_master_subject" ng-disabled="!Settings.alarm_master || (!Settings.alarm_master && (Settings.alarm_error || Settings.alarm_action))">
+    </div>
+  </div>
+</div> <!-- row -->

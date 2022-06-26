@@ -1,0 +1,188 @@
+
+<p class="edit-title-chapters">Source</p>
+<div ng-repeat="Source in Sources track by $index">
+  <div class="row">
+    <div class="control-group">
+      <div class="col-xs-12 col-sm-3 col-lg-2">
+        <label class="edit-title-options">
+          <input type="checkbox" ng-model="Source.Active" ng-disabled="Source.Role == 'Main'" ng-hide="Source.Role == 'Main'" ng-change="SourceSelect(Source, ActiveJob)">
+          {{ Source.Role }}
+        </label>
+        <select class="form-control select-xs" ng-model="Source.Media.Type" ng-options="ST for ST in SourceTypes | filter: SourceFilter(Source.Role)" ng-change="SourceSelect(Source, ActiveJob)" ng-show="Source.Active"></select>
+        <label ng-show="Source.Role == 'Backup' && Source.Active">
+          <input type="checkbox" ng-model="ActiveJob.job_data.source_main_bak_rr" >
+          Main/Backup rotate
+        </label>
+      </div> <!-- col-xs-12 col-sm-3 col-lg-2 -->
+      <div class="col-xs-10 col-sm-7 col-md-6 col-lg-5" ng-hide="Source.Media.Type == 'Default' || !Source.Active">
+        <label>{{ Source.Role + ' ' + Source.Media.Type }}</label>
+        <div class="input-group">
+          <input type="url" class="form-control input-xs" ng-show="Source.Media.Type == 'URL'" placeholder="Media URL" ng-model="Source.Media.URL" ng-change="SourceSelect(Source, ActiveJob)">
+          <div ng-show="Source.Media.Type == 'Device'">
+            <div ng-hide="MediaSourceLocal.Devices.length">No available device(s)</div>
+            <select class="form-control select-xs" ng-show="MediaSourceLocal.Devices.length" ng-model="Source.Media.Device" ng-options="MD.name as MD.name for MD in MediaSourceLocal.Devices | orderBy" ng-change="SourceSelect(Source, ActiveJob)"></select>
+          </div>
+          <select class="form-control select-xs" ng-show="Source.Media.Type == 'Clip'" ng-model="Source.Media.Clip" ng-options="MAC for MAC in MediaSourceLocal.Assets.clips | orderBy" ng-change="SourceSelect(Source, ActiveJob)"></select>
+          <select class="form-control select-xs" ng-show="Source.Media.Type == 'Image'" ng-model="Source.Media.Image" ng-options="MAI for MAI in MediaSourceLocal.Assets.images | orderBy" ng-change="SourceSelect(Source, ActiveJob)"></select>
+          <span class="input-group-btn" ng-show="Source.Media.Type != 'Device'"">
+            <a class="btn btn-mi" href="" ng-click="MediaInfoGetData(Source)" title="MediaInfo">
+              <i ng-hide="Source.Analyzing" class="fa fa-info-circle"></i>
+              <i ng-show="Source.Analyzing" class="fa fa-cog fa-spin"></i>
+              Analyze
+            </a>
+          </span>
+        </div> <!-- input-group -->
+      </div> <!-- Source.Media.Type -->
+    </div> <!-- control-group -->
+  </div> <!-- row -->
+  <div class="row" ng-show="Source.Options.SRTShow && Source.Media.Type == 'URL' && Source.Active">
+    <div class="control-group">
+      <div class="col-xs-6 col-sm-4 col-lg-3">
+        <label class="control-label">SRT mode</label>
+        <select class="form-control select-xs" ng-model="ActiveJob.job_data[Source.dbName.SRTMode]" ng-options="SRTMode.value as SRTMode.alias for SRTMode in SRTModes"></select>
+      </div> <!-- col-xs-6 col-sm-4 col-lg-3 -->
+      <div class="col-xs-6 col-sm-4 col-lg-3">
+        <label class="control-label">SRT passphrase</label>
+        <input type="text" class="form-control input-xs" placeholder="length >=10" ng-model="ActiveJob.job_data[Source.dbName.SRTPassphrase]">
+      </div> <!-- col-xs-6 col-sm-4 col-lg-3 -->
+    </div> <!-- control-group -->
+  </div>
+  <div class="row" ng-show="Source.Options.UDPShow && Source.Media.Type == 'URL' && Source.Active">
+    <div class="control-group">
+      <div class="col-xs-6 col-sm-4 col-lg-3">
+        <label class="control-label">UDP Buffer</label>
+        <input type="number" min="64" class="form-control input-xs" placeholder="megabytes" ng-model="ActiveJob.job_data[Source.dbName.UDPBuffer]">
+      </div> <!-- col-xs-6 col-sm-4 col-lg-3 -->
+    </div> <!-- control-group -->
+    <div class="control-group">
+      <div class="col-xs-6 col-sm-4 col-lg-3">
+        <label class="control-label">UDP Timeout</label>
+        <input type="number" min="1" class="form-control input-xs" placeholder="seconds" ng-model="ActiveJob.job_data[Source.dbName.UDPTimeout]">
+      </div> <!-- col-xs-6 col-sm-4 col-lg-3 -->
+    </div> <!-- control-group -->
+    <div class="control-group">
+      <div class="col-xs-12 col-sm-4 checkbox-label">
+        <label>
+          <input type="checkbox" ng-model="ActiveJob.job_data[Source.dbName.UDPOverrun]">
+          UDP Overrun Survive
+        </label>
+      </div> <!-- col-xs-12 col-sm-4 checkbox-label -->
+    </div> <!-- control-group -->
+  </div> <!-- row -->
+
+    <div class="control-group">
+      <div class="col-xs-12 col-sm-offset-3 col-lg-offset-2" ng-show="Source.Options.YTShow">
+        Stream ID: <strong>{{ ActiveJob.job_data[Source.dbName.MediaExt].format_id || 'N/A' }}</strong>
+        <!--
+        | Valid for: <strong>{{ ActiveJob.job_data[Source.dbName.MediaExt].valid_for }}</strong>
+      -->
+      </div> <!-- col-xs-12 col-sm-4 checkbox-label -->
+    </div> <!-- control-group -->
+
+  <div class="row" ng-show="Source.Active">
+    <div class="control-group" ng-show="Source.Media.Type != 'Default' && Source.Media.Type != 'Device'">
+      <div class="col-xs-2">
+        <label>
+          <input type="checkbox" ng-model="ActiveJob.job_data[Source.dbName.Loop]" ng-disabled="Source.Media.Type == 'Image' && Source.Active">
+          Loop
+        </label>
+      </div> <!-- col-xs-2 checkbox-label -->
+    </div> <!-- control-group -->
+    <div class="control-group">
+      <div class="col-xs-6 col-sm-4 col-md-3" ng-show="Source.Options.HTTPShow">
+        <label>
+          <input type="checkbox" ng-model="ActiveJob.job_data[Source.dbName.HTTPReconnect]">
+          Reconnect on fail
+        </label>
+      </div> <!-- col-xs-12 col-sm-4 checkbox-label -->
+    </div> <!-- control-group -->
+    <div class="control-group">
+      <div class="col-xs-6 col-sm-4 col-md-3" ng-show="Source.Options.MPEGTSShow">
+        <label>
+          <input type="checkbox" ng-model="ActiveJob.job_data[Source.dbName.MergePMTVersions]">
+          Megre PMT versions
+        </label>
+      </div> <!-- col-xs-12 col-sm-4 checkbox-label -->
+    </div> <!-- control-group -->
+  </div> <!-- row -->
+  <div class="row" ng-show="Source.Active && Source.Media.Type == 'Device' && MediaSourceLocal.Devices.length">
+    <div ng-hide="Decklink[0].values.length">
+      <div class="row">
+        <div class="col-xs-12">
+          <label class="control-label">Status:</label>
+          <span class="msg-err">{{ DecklinkStatus }}</span>
+        </div>
+      </div>
+    </div>
+    <div ng-repeat="DL in Decklink track by $index">
+      <div ng-show="Decklink[0].values.length" class="col-xs-6 col-sm-4 col-md-3">
+        <label class="control-label">
+          <input ng-if="DL.type == 'checkbox'" type="{{ DL.type }}" ng-model="ActiveJob.job_data[Source.dbName.MediaExt][Source.Media.Device][DL.ff_opt]">
+          {{ DL.alias }}
+        </label>
+        <select ng-if="DL.type == 'select'" class="form-control select-xs" ng-model="ActiveJob.job_data[Source.dbName.MediaExt][Source.Media.Device][DL.ff_opt]" ng-options="DLV for DLV in DL.values"></select>
+        <input ng-if="DL.type == 'text' || DL.type == 'number'" class="form-control input-xs" type="{{ DL.type }}" ng-model="ActiveJob.job_data[Source.dbName.MediaExt][Source.Media.Device][DL.ff_opt]">
+      </div> <!-- col-xs-6 col-sm-4 col-lg-3 -->
+    </div>
+  </div> <!-- row -->
+  <p ng-show="Source.Active && Source.Media.Type != 'Default'" class="edit-title-chapters">Decoder</p>
+  <div class="row" ng-show="Source.Active && Source.Media.Type != 'Default' && Source.Media.Type != 'Device'">
+    <div class="row">
+      <div class="control-group">
+        <div class="col-xs-6 col-sm-4 col-md-3">
+          <label class="control-label">Video decoder</label>
+          <select class="form-control select-xs" ng-model="ActiveJob.job_data[Source.dbName.vDecoder]" ng-options="vdecoder.value as vdecoder.alias for vdecoder in VideoDecoders | filter: GPUEnabledFilter()"></select>
+        </div> <!-- col-xs-6 col-sm-4 col-lg-3 -->
+      </div> <!-- control-group -->
+      <div class="control-group">
+        <div class="col-xs-6 col-sm-4 col-md-3">
+          <label class="control-label">Decoder error detect</label>
+          <select class="form-control select-xs" ng-model="ActiveJob.job_data[Source.dbName.DecoderErrDetect]" ng-options="decoder_err.value as decoder_err.alias for decoder_err in DecoderErrDetect"></select>
+        </div> <!-- col-xs-6 col-sm-4 col-lg-3 -->
+      </div> <!-- control-group -->
+      <div ng-show="GPUOptionsShow" class="control-group">
+        <div class="col-xs-6 col-sm-4 col-md-3">
+          <label class="control-label">Decoder deinterlace</label>
+          <select class="form-control select-xs" ng-model="ActiveJob.job_data[Source.dbName.DecoderDeinterlace]" ng-options="decoder_deint.value as decoder_deint.alias for decoder_deint in DecoderOptions.Deinterlace"></select>
+        </div> <!-- col-xs-6 col-sm-4 col-lg-3 -->
+      </div>
+    </div>
+    <div class="row" ng-show="GPUOptionsShow">
+      <div class="control-group">
+        <div class="col-xs-12 col-sm-4 col-md-3">
+          <label class="control-label">Decoder scale</label>
+          <select class="form-control select-xs" ng-model="DecoderOptions.Scale.Value" ng-options="vpsize.value as vpsize.alias for vpsize in vFilterOptions.Scale | filter: '!ALL'" ng-change="DecoderCustomScaleSelect(Source)"></select>
+        </div>
+        <div ng-show="DecoderOptions.Scale.Value == 'Custom'">
+          <div class="col-xs-6 col-sm-4 col-md-3">
+            <label class="control-label">Width</label>
+            <input type="number" min="32" placeholder="pixels" class="form-control input-xs" ng-model="DecoderOptions.Scale.Width" ng-change="DecoderCustomScaleSelect(Source)">
+          </div> <!-- col-xs-6 -->
+          <div class="col-xs-6 col-sm-4 col-md-3">
+            <label class="control-label">Height</label>
+            <input type="number" min="32" placeholder="pixels" class="form-control input-xs" ng-model="DecoderOptions.Scale.Height" ng-change="DecoderCustomScaleSelect(Source)">
+          </div> <!-- col-xs-6 -->
+        </div> <!-- vFilters.Scale.Value == 'Custom' -->
+      </div> <!-- control-group -->
+    </div> <!-- row -->
+    <div class="row">
+      <div class="control-group">
+        <div class="col-xs-12 col-sm-4 col-md-3">
+          <label class="control-label">Thumbnails render</label>
+          <select class="form-control select-xs" ng-model="ActiveJob.job_data.thumb_render" ng-options="Thumb.value as Thumb.alias for Thumb in ThumbnailsOptions | filter: GPUEnabledFilter()"></select>
+        </div>
+        <div class="col-xs-6 col-sm-4 col-md-3" ng-show="ActiveJob.job_data.thumb_render">
+          <label class="control-label">Thumbnails interval</label>
+          <input type="number" min="1" placeholder="frames" class="form-control input-xs" ng-model="ActiveJob.job_data.thumb_interval">
+        </div> <!-- col-xs-6 -->
+      </div> <!-- control-group -->
+    </div> <!-- row -->
+  </div> <!-- row -->
+  <hr>
+</div> <!-- Source in Sources -->
+
+<div class="row">
+  <div class="col-xs-12 col-md-10 col-lg-8">
+    <div ng-include="'/html/mediainfo.html'" ng-if="MediaInfo"></div>
+  </div> <!-- col-xs-12 col-md-10 col-lg-8 -->
+</div> <!-- row -->

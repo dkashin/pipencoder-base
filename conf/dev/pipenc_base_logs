@@ -1,0 +1,12 @@
+/home/kashin/Dev/pipencoder/pipencoder-base/logs/jobs/*.log
+/home/kashin/Dev/pipencoder/pipencoder-base/logs/errors/*.log
+/home/kashin/Dev/pipencoder/pipencoder-base/logs/system/*.log
+{
+  daily
+  rotate 2
+  copytruncate
+  delaycompress
+  notifempty
+  missingok
+  size 100M
+}

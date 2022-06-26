@@ -1,0 +1,16 @@
+*.pid
+*.sock
+*.py[cod]
+*.log
+*.log.*
+*.db
+*.db-*
+*.pem
+/drm/aes-128/*
+/media/hls/*
+/media/ss/*
+/app/build
+/venv
+migrations/versions/*
+
+

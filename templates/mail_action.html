@@ -1,0 +1,100 @@
+<html>
+  <head>
+    <strong>HOST:</strong> {{ info.host }}
+    <style media="screen" type="text/css">
+    table {
+      font-family: Times;
+      font-size: 13px;
+      border-collapse: separate;
+      border-spacing: 0;
+    }
+    thead {
+      background-color: #888;
+      color: #fff;
+      font-size: 12px;
+      text-transform: uppercase;
+      font-family: "Lato","Helvetica Neue",Helvetica,Arial,sans-serif;
+    }
+    th, td {
+      text-align: center;
+      padding: 10px;
+      border-top: 0;
+      font-weight: normal;
+    }
+    td {
+      border-bottom: 1px solid #cecfd5;
+      word-wrap: break-word;
+    }
+    tbody tr:nth-child(even) {
+      background-color: #f0f0f0;
+    }
+    </style>
+  </head>
+  <body>
+    <p>Following user action(s) detected:</p>
+
+    {% set vars = {'job_events': False, 'sys_events': False} %}
+
+    {% for i in info.report %}
+      {% if i.id %}
+        {% if vars.update({'job_events': True}) %} {% endif %}
+      {% else %}
+        {% if vars.update({'sys_events': True}) %} {% endif %}
+      {% endif %}
+    {% endfor %}
+
+    {% if vars.job_events %}
+    <p>Job events</p>
+    <table>
+      <thead>
+        <th>Time</th>
+        <th>Event</th>
+        <th>ID</th>
+        <th>Job name</th>
+        <th>Info</th>
+        <th>User</th>
+      </thead>
+    {% endif %}
+      <tbody>
+        {% for i in info.report | sort(attribute = 'time') %}
+        {% if i.id %}
+        <tr>
+          <td>{{ i.time }}</td>
+          <td>{{ i.event }}</td>
+          <td>{{ i.id }} / {{ i.sid }}</td>
+          <td>{{ i.name }}</td>
+          <td>{{ i.info }}</td>
+          <td>{{ i.user }}</td>
+        </tr>
+        {% endif %}
+        {% endfor %}
+      </tbody>
+    </table>
+
+    {% if vars.sys_events %}
+    <p>System events</p>
+    <table>
+      <thead>
+        <th>Time</th>
+        <th>Event</th>
+        <th>Info</th>
+        <th>User</th>
+      </thead>
+    {% endif %}
+      <tbody>
+        {% for i in info.report | sort(attribute = 'time') %}
+        {% if i.id is not defined %}
+        <tr>
+          <td>{{ i.time }}</td>
+          <td>{{ i.event }}</td>
+          <td>{{ i.info }}</td>
+          <td>{{ i.user }}</td>
+        </tr>
+        {% endif %}
+        {% endfor %}
+      </tbody>
+    </table>
+
+    <p>Automatic report, please don't reply to this email.</p>
+  </body>
+</html>

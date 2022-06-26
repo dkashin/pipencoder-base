@@ -1,0 +1,16 @@
+
+<div class="content-loader" ng-hide="ActiveJob && Sources && Servers.List">
+  <i class="fa fa-5x fa-cog fa-spin"></i>
+  <p>Please wait</p>
+</div> <!-- content-loader -->
+
+<div class="row" ng-show="ContentLoaded && ActiveJob && Sources && Servers.List">
+  <div ng-include="'/html/job_edit_info.html'"></div>
+  <div ng-include="'/html/job_edit_source.html'"></div>
+  <div ng-include="'/html/job_edit_profile.html'"></div>
+  <div ng-include="'/html/job_edit_target.html'" ng-if="Servers.List"></div>
+  <div ng-include="'/html/job_edit_abr.html'" ng-if="Servers.List"></div>
+  <div ng-include="'/html/job_edit_drm.html'" ng-if="Servers.List"></div>
+  <div ng-include="'/html/job_edit_checks.html'"></div>
+  <div ng-include="'/html/job_edit_preview.html'"></div>
+</div> <!-- row -->

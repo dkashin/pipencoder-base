@@ -1,0 +1,7 @@
+{
+  "type": "video",
+  "name": "Stream copy",
+  "vcodec": "copy",
+  "vbitrate": null,
+  "description": "Stream copy, no encoding"
+}

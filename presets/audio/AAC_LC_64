@@ -1,0 +1,8 @@
+{
+  "description": "System preset", 
+  "abitrate": 64, 
+  "channels": 2, 
+  "acodec": "libfdk_aac", 
+  "type": "audio", 
+  "name": "AAC LC 64"
+}

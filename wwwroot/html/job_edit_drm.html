@@ -1,0 +1,88 @@
+
+<p class="edit-title-chapters">HLS DRM</p>
+<div class="row">
+  <div class="col-xs-12 col-md-2">
+    <label class="control-label edit-title-options">
+      <input type="checkbox" ng-model="ActiveJob.job_data.hls_drm_active">
+      DRM Active
+    </label>
+  </div>
+  <div ng-show="ActiveJob.job_data.hls_drm_active">
+    <div class="col-xs-12 col-sm-6 col-md-3">
+      <label class="control-label">DRM type</label>
+      <select class="form-control select-xs" ng-model="ActiveJob.job_data.hls_drm_type" ng-options="DRMType for DRMType in DRMTypes">
+      </select>
+    </div>
+    <div class="col-xs-12 col-sm-6 col-md-3">
+      <label class="control-label">DRM key type</label>
+      <select class="form-control select-xs" ng-model="ActiveJob.job_data.hls_drm_key_type" ng-options="DRMStorage for DRMStorage in DRMStorages">
+      </select>
+    </div>
+    <div class="col-xs-12" ng-show="ActiveJob.job_data.hls_drm_key_type == 'Remote'">
+      <div class="row">
+        <div class="col-xs-12 col-md-8" >
+          <label class="control-label">DRM key URL</label>
+          <input type="text" class="form-control input-xs" placeholder="remote key URL" ng-model="ActiveJob.job_data.hls_drm_key_url">
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-xs-12 col-sm-4">
+          <label>Username</label>
+          <input type="text" class="form-control" ng-model="ActiveJob.job_data.hls_drm_key_user" placeholder="username">
+        </div>
+        <div class="col-xs-12 col-sm-4">
+          <label>Password</label>
+          <input type="password" autocomplete="off" class="form-control" ng-model="ActiveJob.job_data.hls_drm_key_password" placeholder="password">
+        </div>
+      </div>
+    </div>
+    <div class="col-xs-12 col-md-8" ng-show="ActiveJob.job_data.hls_drm_key_type == 'Local'">
+      <label class="control-label">DRM key value</label>
+      <div class="input-group">
+        <input type="text" class="form-control input-xs" placeholder="hex-coded 16-byte key" ng-model="ActiveJob.job_data.hls_drm_key">
+        <div class="input-group-btn">
+          <button type="button" class="btn btn-main btn-main-green" title="OK" ng-click="DRMKeygen('Key')">Generate</button>
+        </div>
+      </div>
+    </div>
+    <div class="col-xs-12 col-md-8">
+      <label class="control-label">DRM IV value</label>
+      <div class="input-group">
+        <input type="text" class="form-control input-xs" placeholder="hex-coded 16-byte IV" ng-model="ActiveJob.job_data.hls_drm_key_iv">
+        <div class="input-group-btn">
+          <button type="button" class="btn btn-main btn-main-green" title="OK" ng-click="DRMKeygen('IV')">Generate</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div> <!-- row -->
+
+<div ng-show="ActiveJob.job_data.hls_drm_active">
+  <div class="col-xs-12 abr-stream-list">
+    <div ng-hide="MetadataAssets.DRM[0]">
+      <h4>No HLS assets are available</h4>
+    </div>
+    <div ng-show="MetadataAssets.DRM[0]">
+      <table>
+        <thead>
+          <tr>
+            <th></th>
+            <th>DRM ASSETS: </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="row-select" ng-repeat="Asset in MetadataAssets.DRM track by $index">
+            <td class="checkbox-select">
+              <span>
+                <input type="checkbox" ng-model="ActiveJob.profile[Asset.Profile].target[Asset.Target].hls_drm_asset">
+              </span>
+            </td>
+            <td ng-click="DRMManifestSelect(Asset)">
+              {{ Asset.Manifest }}
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div> <!-- row -->

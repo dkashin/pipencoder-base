@@ -1,0 +1,19 @@
+
+<p class="edit-title-chapters">URL Preview</p>
+<div class="row">
+  <div class="control-group">
+    <div class="col-md-12" ng-show="ActiveJob.job_data.hls_abr_active">
+      <span>Master ABR:</span>
+      <span>
+        <strong>{{ PreviewABR.URL }}</strong>
+      </span>
+    </div>
+    <div class="col-md-12" ng-repeat="profiles in PreviewURLDynamic track by $index">
+      <span class="edit-preview-link">{{ 'Profile #' + $index }}</span>
+      <div class="col-md-12" ng-repeat="target in profiles track by $index">
+        <span class="edit-preview-link">{{ 'Target #' + $index }}</span>
+        <span>{{ ': ' + target.url }}</span>
+      </div>
+    </div>
+  </div>
+</div>

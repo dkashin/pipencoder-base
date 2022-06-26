@@ -1,0 +1,66 @@
+
+<div class="col-md-12 col-lg-6">
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <span ng-hide="Server.Action.Submit">{{ Server.Header }}</span>
+      <span ng-show="Server.Action.Delete || SelectedServerAction == 'edit' && !Server.Action.Submit" class="settings-warning">(This action will affect associated jobs!)</span>
+      <span ng-show="Server.Action.Submit"><i class="fa fa-cog fa-spin"></i>&nbspWorking...</span>
+    </div>
+    <div class="panel-body">
+      <div class="row" ng-hide="Server.Action.Edit">
+        <div class="col-xs-6 col-sm-8 col-md-6 col-lg-6">
+          <select ng-disabled="Server.Action.Delete || Server.Action.Submit" class="form-control" ng-model="Server.Selected" ng-options="( srv.name + ' [' + srv.ip + ']' ) for srv in Server.List track by srv.id">
+          </select>
+        </div>
+        <span ng-hide="Server.Action.Delete || Server.Action.Submit">
+          <button type="button" class="btn btn-main btn-main-green btn-tp btn-tp-gray glyphicon glyphicon-plus" title="Add" ng-click="ServerAction('add')"></button>
+          <button type="button" ng-disabled="!Server.Selected" class="btn btn-main btn-main-blue btn-tp btn-tp-gray glyphicon glyphicon-pencil" title="Edit" ng-click="ServerAction('edit')" ></button>
+          <button type="button" ng-disabled="!Server.Selected" class="btn btn-main btn-main-red btn-tp btn-tp-gray glyphicon glyphicon-remove" title="Delete" ng-click="ServerAction('delete')"></button>
+        </span>
+        <span ng-show="Server.Action.Delete && !Server.Action.Submit">
+          <button type="button" class="btn btn-main btn-main-red" title="Delete" ng-click="ServerManage('delete')">DELETE</button>
+          <button type="button" class="btn btn-main btn-main-gray" title="Cancel" ng-click="ServerAction('cancel')">CANCEL</button>
+        </span>
+      </div>
+      <form class="form-horizontal" ng-submit="ServerManage(SelectedServerAction)">
+        <div ng-show="Server.Action.Edit">
+          <div class="form-group">
+            <div class="col-xs-12 col-sm-6 col-md-4 col-lg-4">
+              <label>Name</label>
+              <input type="text" class="form-control" placeholder="server name" ng-model="server_form_data.name" ng-disabled="Server.Action.Submit" required>
+            </div>
+            <div class="col-xs-12 col-sm-6 col-md-4 col-lg-8">
+              <label>Server IP / domain</label>
+              <input type="text" class="form-control" placeholder="1.2.3.4 / domain" ng-model="server_form_data.ip" ng-change="ServerIPMapping(server_form_data.ip)" ng-disabled="Server.Action.Submit" required>
+            </div>
+          </div>
+          <div class="form-group">
+            <div class="col-xs-12 col-sm-6 col-md-4 col-lg-8">
+              <input id="SrvHLS" type="checkbox" ng-model="ServerFeatures.HLS" ng-disabled="Server.Action.Submit">
+              <label for="SrvHLS" class="control-label">HLS Server</label>
+              <input type="url" class="form-control" placeholder="http(s)://IP_domain" ng-show="ServerFeatures.HLS" ng-model="server_form_data.hls_srv" ng-disabled="Server.Action.Submit">
+            </div>
+            <div class="col-xs-12 col-sm-6 col-md-4 col-lg-8">
+              <input id="SrvRTMP" type="checkbox" ng-model="ServerFeatures.RTMP" ng-disabled="Server.Action.Submit">
+              <label for="SrvRTMP" class="control-label">RTMP Server</label>
+              <input type="url" class="form-control" placeholder="rtmp://IP_domain" ng-show="ServerFeatures.RTMP" ng-model="server_form_data.rtmp_srv" ng-disabled="Server.Action.Submit">
+            </div>
+          </div>
+<!--
+            <div class="col-xs-12 col-sm-2 col-lg-3">
+              <input id="isSmooth" type="checkbox" ng-model="ServerFeatures.Smooth">
+              <label for="isSmooth" class="control-label">Smooth Port</label>
+              <input type="number" class="form-control" placeholder="integer" ng-show="ServerFeatures.Smooth" ng-model="server_form_data.ss_port">
+            </div>
+-->
+          <div class="form-group">
+            <div class="col-xs-12 col-sm-12 col-md-12">
+              <button type="submit" class="btn btn-main btn-main-green" ng-disabled="!(ServerFeatures.HLS || ServerFeatures.RTMP) || Server.Action.Submit" title="Save">SAVE</button>
+              <button type="button" class="btn btn-main btn-main-gray" title="Cancel" ng-click="ServerAction('cancel')" ng-disabled="Server.Action.Submit">CANCEL</button>
+            </div>
+          </div>
+        </div> <!-- Server.Action.Edit -->
+      </form> <!-- ServerManage form -->
+    </div> <!-- panel-body -->
+  </div> <!-- panel-default -->
+</div> <!-- col-md-12 col-lg-6 -->

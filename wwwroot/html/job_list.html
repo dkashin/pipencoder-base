@@ -1,0 +1,134 @@
+
+<div ng-include="'/html/job_list_navbar.html'"></div>
+<div ng-show="ContentLoaded && !EditShow" class="content-wrap">
+  <div class="row" ng-include="'/html/global_message.html'"></div>
+  <div class="row" ng-include="'/html/job_list_filters.html'"></div>
+  <div class="col-xs-12">
+    <div class="col-xs-12">
+      <div class="filter-stat" ng-show="isFiltered">FILTER: {{ Jobs.Filtered }} Job{{ Jobs.Filtered == 1 ? '' : 's' }} </div>
+    </div>
+  </div>
+  <div class="row" ng-include="'/html/job_list_pagination.html'"></div>
+  <div ng-hide="Jobs.Filtered">
+    <p class="events-empty">Job list is empty</p>
+  </div>
+  <div class="row" ng-show="Jobs.Filtered">
+    <div class="col-xs-12 job-frame-wrap">
+      <div class="job-frame-cell" ng-class="ScreenLayoutApply()" ng-repeat="Job in Jobs.List track by Job.job_data.id">
+        <div class="row">
+          <div class="col-xs-12 job-frame-head" ng-class="{ 'job-frame-head-ok': Job.job_data.run_status == 'OK', 'job-frame-head-err': Job.job_data.run_status == 'ERR_ENC' || Job.job_data.run_status == 'ERR_SRC', 'job-frame-head-off': Job.job_data.run_status == 'OFF', 'job-frame-head-upd': Job.job_data.run_status == 'UPD' }">
+            <div class="job-frame-head-text nowrap col-xs-5 col-sm-5" uib-tooltip="{{ Job.job_data.job_name }}" tooltip-placement="bottom" ng-class="GUI.Jobs.Layout[GUI.Jobs.Layout.Mode].Index ? '' : 'col-md-5'">
+              {{ Job.job_data.sid }} | {{ Job.job_data.job_name }}
+            </div>
+            <div class="col-xs-7 col-sm-7 job-frame-head-text" ng-class="GUI.Jobs.Layout[GUI.Jobs.Layout.Mode].Index ? '' : 'col-md-7'" ng-show="GUI.Jobs.Layout.Mode == 'List'">
+              <span class="pull-right">
+                <span ng-show="Jobs.Var[Job.job_data.id].stats.cpu != null">
+                  CPU: {{ Jobs.Var[Job.job_data.id].stats.cpu }}% | RAM: {{ Jobs.Var[Job.job_data.id].stats.ram }}% |
+                </span>
+<!--
+                <span ng-show="Jobs.Var[Job.job_data.id].stats.gpu.gram && GUI.Jobs.Layout[GUI.Jobs.Layout.Mode].Index == 1">
+                  &nbspGPU #{{ Jobs.Var[Job.job_data.id].stats.gpu.idx }} | GRAM: {{ Jobs.Var[Job.job_data.id].stats.gpu.gram }}Mb |
+                </span>
+-->
+                <span ng-show="Job.job_data.hls_drm_active">
+                  &nbsp<i title="{{ Job.job_data.hls_drm_type }} encrypted" class="tips-drm fa fa-lock"></i>
+                </span>
+              </span>
+            </div>
+          </div>
+        </div> <!-- job-frame-head -->
+        <div ng-show="GUI.Jobs.Layout.Mode == 'Monitor'" class="job-frame-body">
+          <img class="ss-preview" ng-src="{{ Jobs.Var[Job.job_data.id].ss || SSFailover }}" ng-click="JobPreview(Job)" />
+        </div> <!-- job-frame-body -->
+        <div ng-show="GUI.Jobs.Layout.Mode == 'List'" class="job-frame-body">
+          <div class="row">
+            <div class="col-xs-12 col-sm-3 job-preview" ng-class="{ 'col-md-4': GUI.Jobs.Layout[GUI.Jobs.Layout.Mode].Index == 0, 'col-md-3 col-lg-2': GUI.Jobs.Layout[GUI.Jobs.Layout.Mode].Index == 1 }">
+              <img class="ss-preview" ng-src="{{ Jobs.Var[Job.job_data.id].ss || SSFailover }}" ng-click="JobPreview(Job)" />
+            </div>
+            <div class="col-xs-2 col-sm-1 job-text-title" ng-class="{ 'col-md-2': GUI.Jobs.Layout[GUI.Jobs.Layout.Mode].Index == 0 }">
+              <div>Job ID:</div>
+              <div>Source:</div>
+              <div>Profiles:</div>
+              <div>Status:</div>
+              <div>Uptime:</div>
+            </div>
+            <div class="col-xs-10 col-sm-6" ng-class="{ 'col-md-8 col-lg-9': GUI.Jobs.Layout[GUI.Jobs.Layout.Mode].Index == 1, 'col-md-6': GUI.Jobs.Layout[GUI.Jobs.Layout.Mode].Index == 0 }">
+              <div class="nowrap">{{ Job.job_data.id }}</div>
+              <div class="nowrap" ng-class="{ 'input-main': Job.job_data.source_active == 'main' && Job.job_data.source_bak }">{{ Job.job_data.source_main }}</div>
+              <div>{{ Job.profile.length }}</div>
+              <div class="nowrap" ng-hide="Job.job_data.run_status == 'UPD' || Actions.JobBusy[Job.job_data.id]">
+                <span ng-class="{ 'msg-ok': Job.job_data.run_status == 'OK', 'msg-err': Job.job_data.run_status == 'ERR_ENC' || Job.job_data.run_status == 'ERR_SRC' }">{{ JobRunStatus(Job.job_data.run_status) }}
+                  <span ng-show="Job.job_data.retries"> ({{ Job.job_data.retries }})</span>
+                </span>
+              </div>
+              <div ng-show="Job.job_data.run_status == 'UPD' || Actions.JobBusy[Job.job_data.id]"><i class="loader fa fa-lg fa-cog fa-spin"></i></div>
+              <div>{{ Jobs.Var[Job.job_data.id].stats.uptime || 'N/A' }}</div>
+            </div>
+            <div class="visible-xs visible-sm" ng-class="{ 'visible-md visible-lg': GUI.Jobs.Layout[GUI.Jobs.Layout.Mode].Index == 1 }">
+              <div class="col-xs-12 col-sm-9 col-md-9 col-lg-10 col-sm-offset-3 col-md-offset-3 col-lg-offset-2">
+                <div class="col-xs-6 col-sm-4 col-md-3 col-lg-2">
+                  <select id="AP" class="form-control select-xs job-profile-select" ng-model="PreviewProfile" ng-options="idx as ('Profile #' + idx) for (idx, profile) in Job.profile" ng-init="PreviewProfile = '0'"></select>
+                </div>
+              </div>
+              <div class="col-xs-2 col-sm-1 col-sm-offset-3 col-md-offset-3 col-lg-offset-2 job-text-title" ng-class="{ 'col-md-2': GUI.Jobs.Layout[GUI.Jobs.Layout.Mode].Index == 0 }">
+                <div>Profile(s): </div>
+                <div>Preset: </div>
+                <div>PID/Track:</div>
+                <div>Filter:</div>
+                <div ng-show="Job.job_data.hls_abr_active">ABR:</div>
+                <div>Target(s):</div>
+              </div>
+              <div class="col-xs-10 col-sm-6" ng-class="{ 'col-md-8 col-lg-9': GUI.Jobs.Layout[GUI.Jobs.Layout.Mode].Index == 1, 'col-md-6': GUI.Jobs.Layout[GUI.Jobs.Layout.Mode].Index == 0 }">
+                <div>{{ Job.profile.length }}</div>
+                <div class="nowrap">
+                  Video [{{ Job.profile[PreviewProfile].vpreset }}], Audio [{{ Job.profile[PreviewProfile].apreset }}]
+                </div>
+                <div class="nowrap">
+                  {{ (Job.profile[PreviewProfile].main_vpid != null) ? 'Video [' + Job.profile[PreviewProfile].main_vpid + ']' : 'No video' }}, {{ (Job.profile[PreviewProfile].main_apid != null) ? 'Audio [' + Job.profile[PreviewProfile].main_apid + ']' : 'No audio' }}
+                </div>
+                <div class="nowrap">
+                  Resize [{{ Job.profile[PreviewProfile].venc_psize || 'No' }}], Deinterlace [{{ Job.profile[PreviewProfile].venc_di ? 'Yes' : 'No' }}]
+                </div>
+                <div ng-show="Job.job_data.hls_abr_active" class="nowrap">
+                  <strong>{{ ToolsFactory.LocalhostIPReplace(Job.job_data.hls_abr_url) }}</strong>
+                </div>
+                <div ng-repeat="target in Job.profile[PreviewProfile].target track by $index">
+                  <div class="nowrap">
+                    {{ '#' + $index + ': ' + ToolsFactory.LocalhostIPReplace(target.preview) }}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div> <!-- row -->
+          <div class="row">
+            <div ng-class="{ 'col-md-6 btn-job-body-right': GUI.Jobs.Layout[GUI.Jobs.Layout.Mode].Index == 1, '': GUI.Jobs.Layout[GUI.Jobs.Layout.Mode].Index == 0 }">
+              <div class="btn-group btn-group-justified" role="group" ng-hide="Actions.JobDelete[Job.job_data.id]">
+                <div class="btn-group" role="group">
+                  <button class="btn btn-main btn-job-body btn-main-green btn-tp btn-tp-gray glyphicon glyphicon-play" title="Start" ng-disabled="Actions.JobBusy[Job.job_data.id] || !LicenseInfo" ng-show="Job.job_data.run_status == 'OFF'" ng-click="JobStartStop([ Job.job_data.id ], 'start')"></button>
+                  <button class="btn btn-main btn-job-body btn-main-green btn-tp btn-tp-gray glyphicon glyphicon-stop" title="Stop" ng-disabled="Actions.JobBusy[Job.job_data.id]" ng-show="Job.job_data.run_status != 'OFF'" ng-click="JobStartStop([ Job.job_data.id ], 'stop')"></button>
+                </div>
+                <div class="btn-group" role="group">
+                   <button class="btn btn-main btn-job-body btn-main-yellow btn-tp btn-tp-gray glyphicon glyphicon-refresh" title="Restart" ng-disabled="Actions.JobBusy[Job.job_data.id] || !LicenseInfo" ng-click="JobStartStop([ Job.job_data.id ], 'restart')"></button>
+                </div>
+                <div class="btn-group" role="group">
+                   <button class="btn btn-main btn-job-body btn-main-blue btn-tp btn-tp-gray glyphicon glyphicon-wrench" title="Edit" ng-disabled="Actions.JobBusy[Job.job_data.id] || !CurrentUser.isAdmin" ng-click="JobUpdateInit($index, false)"></button>
+                </div>
+                <div class="btn-group" role="group">
+                   <button class="btn btn-main btn-job-body btn-main-gray btn-tp btn-tp-gray glyphicon glyphicon-file" title="Logs" ng-click="JobLogShow(Job)"></button>
+                </div>
+                <div class="btn-group" role="group">
+                   <button class="btn btn-main btn-job-body btn-main-red btn-tp btn-tp-gray glyphicon glyphicon-remove" title="Delete" ng-disabled="Actions.JobBusy[Job.job_data.id] || !CurrentUser.isAdmin" ng-click="JobDeleteInit(Job.job_data.id)"></button>
+                </div>
+              </div>
+              <div class="btn-job-frame" ng-show="Actions.JobDelete[Job.job_data.id]">
+                <button class="btn btn-main btn-job-body btn-main-red btn-tp btn-tp-gray" title="Delete" ng-click="JobDelete([ Job.job_data.id ])">DELETE</button>
+                <button class="btn btn-main btn-job-body btn-main-gray btn-tp btn-tp-gray" title="Cancel" ng-click="JobDeleteCancel(Job.job_data.id)">CANCEL</button>
+              </div>
+            </div>
+          </div> <!-- row -->
+        </div> <!-- job-frame-body -->
+      </div> <!-- job-frame-cell -->
+    </div> <!-- job-frame-wrap -->
+  </div> <!-- row -->
+  <div class="row" ng-include="'/html/job_list_pagination.html'"></div>
+</div> <!-- content-wrap -->

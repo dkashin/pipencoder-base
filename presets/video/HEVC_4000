@@ -1,0 +1,17 @@
+{
+  "vcustom": "",
+  "name": "HEVC 4000",
+  "vcodec": "libx265",
+  "vbitrate": 4000,
+  "keyframes": 2,
+  "subsample": "yuv420p",
+  "minrate": 4000,
+  "maxrate": 4000,
+  "vbuffer": 6000,
+  "vpreset": "veryfast",
+  "zerolatency": false,
+  "type": "video",
+  "gop": 150,
+  "keyint_min": 75,
+  "description": "System preset"
+}

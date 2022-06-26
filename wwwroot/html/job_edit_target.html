@@ -1,0 +1,241 @@
+
+<p class="edit-title-chapters">Target</p>
+
+<div class="row">
+  <div class="col-xs-6 col-sm-3">
+    <select class="form-control" ng-model="Target.Active" ng-options="idx as ('Target #' + idx) for (idx, target) in ActiveJob.profile[Profile.Active].target"></select>
+  </div>
+  <span ng-hide="Target.DeleteConfirm">
+    <button type="button" ng-disabled="ActiveJob.profile[Profile.Active].target.length <= 1" class="btn btn-main btn-main-red btn-tp glyphicon glyphicon-remove" title="Delete target" ng-click="Target.DeleteConfirm = true"></button>
+      <button type="button" class="btn btn-main btn-main-green btn-tp glyphicon glyphicon-plus" title="Add target" ng-click="TargetAdd(Profile.Active, Target.Active)"></button>
+  </span>
+  <span ng-show="Target.DeleteConfirm">
+    <button type="button" class="btn btn-main btn-main-gray" title="Cancel" ng-click="Target.DeleteConfirm = false">CANCEL</button>
+    <button type="button" class="btn btn-main btn-main-red" title="Delete" ng-click="TargetDelete(Profile.Active, Target.Active)">DELETE</button>
+  </span>
+</div>
+
+<div class="row">
+  <div class="control-group">
+    <div class="col-xs-6 col-sm-3">
+      <label for="tType" class="control-label">Target type</label>
+      <select id="tType" class="form-control select-xs" ng-model="ActiveJob.profile[Profile.Active].target[Target.Active].target_type" ng-options="TT for TT in TargetTypes"  ng-change="TargetTypeSelect(Profile.Active, Target.Active)">
+      </select>
+    </div>
+    <div class="col-xs-12 col-sm-5 col-md-4 col-lg-3" ng-show="ActiveJob.profile[Profile.Active].target[Target.Active].target_type == 'Stream'">
+      <label for="tSrv" class="control-label">Server</label>
+      <select id="tSrv" class="form-control select-xs" ng-model="ActiveJob.profile[Profile.Active].target[Target.Active].stream_srv" ng-options="srv.id as ( srv.name + ' (' + srv.ip + ')' ) for srv in Servers.List" ng-change="TargetServerSelect(Profile.Active, Target.Active)">
+      </select>
+    </div>
+    <div class="col-xs-12 col-sm-5 col-md-4 col-lg-3" ng-show="ActiveJob.profile[Profile.Active].target[Target.Active].target_type == 'Device'">
+      <label for="tDev" class="control-label">Device</label>
+      <p ng-hide="MediaSourceLocal.Devices.length">No available device(s)</p>
+      <select id="tDev" ng-show="MediaSourceLocal.Devices.length" class="form-control select-xs" ng-model="ActiveJob.profile[Profile.Active].target[Target.Active].device_name" ng-options="TargetDev.name as TargetDev.name for TargetDev in MediaSourceLocal.Devices">
+      </select>
+    </div>
+  </div>
+</div>
+<div class="row" ng-show="ActiveJob.profile[Profile.Active].target[Target.Active].target_type == 'Stream'">
+  <div class="control-group">
+    <div class="col-xs-12 col-sm-3 col-lg-2">
+      <label for="Stype" class="control-label">Type</label>
+      <select id="Stype" class="form-control select-xs" ng-model="ActiveJob.profile[Profile.Active].target[Target.Active].stream_type" ng-options="stream_type.name as stream_type.name for stream_type in Servers.List[ActiveJob.profile[Profile.Active].target[Target.Active].stream_srv].features" ng-change="AssetsPreviewBuild(ActiveJob)"></select>
+    </div>
+  </div>
+  <div class="control-group" ng-show="ActiveJob.profile[Profile.Active].target[Target.Active].stream_type == 'RTMP'">
+    <div class="col-xs-12 col-sm-6 col-md-3 col-lg-2">
+      <label for="RTMPApp" class="control-label">RTMP App</label>
+      <input id="RTMPApp" type="text" class="form-control input-xs" placeholder="app name" ng-model="ActiveJob.profile[Profile.Active].target[Target.Active].stream_app" ng-change="AssetsPreviewBuild(ActiveJob)">
+    </div>
+  </div>
+  <div class="control-group" ng-show="(ActiveJob.profile[Profile.Active].target[Target.Active].stream_type == 'RTMP') || (ActiveJob.profile[Profile.Active].target[Target.Active].stream_type == 'HLS')">
+    <div class="col-xs-12 col-sm-4 col-md-3 col-xl-2">
+      <label for="sName" class="control-label">Stream name</label>
+      <input id="sName" type="text" class="form-control input-xs" placeholder="stream name" ng-model="ActiveJob.profile[Profile.Active].target[Target.Active].stream_name" ng-change="AssetsPreviewBuild(ActiveJob)">
+    </div>
+  </div>
+<!--
+  <div class="control-group" ng-show="(ActiveJob.profile[Profile.Active].target[Target.Active].stream_type == 'Smooth')">
+    <div class="col-xs-12 col-sm-6 col-md-3 col-lg-2">
+      <label for="SmoothApp" class="control-label">Smooth App</label>
+      <input id="SmoothApp" type="text" class="form-control input-xs" placeholder="app name" ng-model="ActiveJob.profile[Profile.Active].target[Target.Active].stream_app" ng-change="AssetsPreviewBuild(ActiveJob)">
+    </div>
+  </div>
+-->
+  <div class="control-group" ng-show="ActiveJob.profile[Profile.Active].target[Target.Active].stream_type == 'HLS'">
+    <div class="col-xs-12 col-sm-4 col-md-3 col-xl-2">
+      <label for="pName" class="control-label">Playlist name</label>
+      <input id="pName" type="text" class="form-control input-xs" placeholder="playlist name" ng-model="ActiveJob.profile[Profile.Active].target[Target.Active].hls_list_name" ng-change="AssetsPreviewBuild(ActiveJob)">
+    </div>
+  </div>
+  <div class="control-group" ng-show="ActiveJob.profile[Profile.Active].target[Target.Active].stream_type == 'HLS'">
+    <div class="col-xs-12 col-sm-4 col-md-3 col-lg-2">
+      <label for="HLSSegFmt" class="control-label">Segments format</label>
+      <select id="HLSSegFmt" class="form-control select-xs" ng-model="ActiveJob.profile[Profile.Active].target[Target.Active].hls_seg_format" ng-options="seg_format.value as seg_format.alias for seg_format in TargetOptions.HLSSegmentFormat | filter: '!ALL'" ng-change="TargetHLSSegmentFormatChange(ActiveJob.profile[Profile.Active].target[Target.Active])"></select>
+    </div>
+  </div>
+  <div class="control-group" ng-show="ActiveJob.profile[Profile.Active].target[Target.Active].stream_type == 'HLS'">
+    <div class="col-xs-12 col-sm-4 col-md-3 col-xl-2">
+      <label for="HLSSegName" class="control-label">Segments name</label>
+      <input id="HLSSegName" type="text" class="form-control input-xs" placeholder="ex: %Y%m%d%H%M%S" ng-model="ActiveJob.profile[Profile.Active].target[Target.Active].hls_seg_name">
+    </div>
+  </div>
+  <div class="control-group" ng-show="ActiveJob.profile[Profile.Active].target[Target.Active].stream_type == 'HLS'">
+    <div class="col-xs-12 col-sm-4 col-md-2">
+      <label for="HLSListSize" class="control-label">Playlist length</label>
+      <input id="HLSListSize" type="number" min="1" class="form-control input-xs" placeholder="number" ng-model="ActiveJob.profile[Profile.Active].target[Target.Active].hls_list_size">
+    </div>
+  </div>
+  <div class="control-group" ng-show="ActiveJob.profile[Profile.Active].target[Target.Active].stream_type == 'HLS'">
+    <div class="col-xs-12 col-sm-4 col-md-2">
+      <label for="HLSSegmentTime" class="control-label">Segments length</label>
+      <input id="HLSSegmentTime" type="number" min="1" class="form-control input-xs" placeholder="seconds" ng-model="ActiveJob.profile[Profile.Active].target[Target.Active].hls_seg_time">
+    </div>
+  </div>
+  <div class="control-group" ng-show="ActiveJob.profile[Profile.Active].target[Target.Active].stream_type == 'HLS' && Servers.ListCopy[ActiveJob.profile[Profile.Active].target[Target.Active].stream_srv].ip != 'localhost'">
+    <div class="col-xs-12 col-sm-4 col-md-3 checkbox-label">
+      <input id="AbsSeg" type="checkbox" ng-model="ActiveJob.profile[Profile.Active].target[Target.Active].hls_seg_abs_path">
+      <label for="AbsSeg" class="control-label">Absolute paths</label>
+    </div>
+  </div>
+  <div class="control-group" ng-show="ActiveJob.profile[Profile.Active].target[Target.Active].stream_type == 'UDP'">
+    <div class="col-xs-12 col-sm-3 col-lg-2">
+      <label for="UDPIP" class="control-label">IP</label>
+      <input id="UDPIP" type="text" class="form-control input-xs" placeholder="0.0.0.0" ng-model="ActiveJob.profile[Profile.Active].target[Target.Active].udp_ip" ng-change="AssetsPreviewBuild(ActiveJob)">
+    </div>
+  </div>
+  <div class="control-group" ng-show="ActiveJob.profile[Profile.Active].target[Target.Active].stream_type == 'UDP'">
+    <div class="col-xs-12 col-sm-3 col-md-3 col-lg-2">
+      <label for="UDPPort" class="control-label">Port</label>
+      <input id="UDPPort" type="number" min="0" class="form-control input-xs" placeholder="1234" ng-model="ActiveJob.profile[Profile.Active].target[Target.Active].udp_port" ng-change="AssetsPreviewBuild(ActiveJob)">
+    </div>
+  </div>
+  <div class="control-group" ng-show="ActiveJob.profile[Profile.Active].target[Target.Active].stream_type == 'UDP'">
+    <div class="col-xs-12 col-sm-3 col-md-3 col-lg-2">
+      <label for="UDPPackSize" class="control-label">Packet size</label>
+      <input id="UDPPackSize" type="number" min="32" class="form-control input-xs" placeholder="1316" ng-model="ActiveJob.profile[Profile.Active].target[Target.Active].udp_pkt_size">
+    </div>
+  </div>
+  <div class="control-group" ng-show="ActiveJob.profile[Profile.Active].target[Target.Active].stream_type == 'SRT'">
+    <div class="col-xs-12 col-sm-3 col-lg-2">
+      <label for="SRTIP" class="control-label">Mode</label>
+      <select class="form-control select-xs" ng-model="ActiveJob.profile[Profile.Active].target[Target.Active].srt_mode" ng-options="SRTMode.value as SRTMode.alias for SRTMode in SRTModes"></select>
+    </div>
+  </div>
+  <div class="control-group" ng-show="ActiveJob.profile[Profile.Active].target[Target.Active].stream_type == 'SRT'">
+    <div class="col-xs-12 col-sm-3 col-lg-2">
+      <label for="SRTIP" class="control-label">IP</label>
+      <input id="SRTIP" type="text" class="form-control input-xs" placeholder="0.0.0.0" ng-model="ActiveJob.profile[Profile.Active].target[Target.Active].srt_ip" ng-change="AssetsPreviewBuild(ActiveJob)">
+    </div>
+  </div>
+  <div class="control-group" ng-show="ActiveJob.profile[Profile.Active].target[Target.Active].stream_type == 'SRT'">
+    <div class="col-xs-12 col-sm-3 col-md-3 col-lg-2">
+      <label for="SRTPort" class="control-label">Port</label>
+      <input id="SRTPort" type="number" min="0" class="form-control input-xs" placeholder="1234" ng-model="ActiveJob.profile[Profile.Active].target[Target.Active].srt_port" ng-change="AssetsPreviewBuild(ActiveJob)">
+    </div>
+  </div>
+  <div class="control-group" ng-show="ActiveJob.profile[Profile.Active].target[Target.Active].stream_type == 'SRT'">
+    <div class="col-xs-12 col-sm-3 col-md-3 col-lg-2">
+      <label for="SRTPackSize" class="control-label">Packet size</label>
+      <input id="SRTPackSize" type="number" min="32" class="form-control input-xs" placeholder="1316" ng-model="ActiveJob.profile[Profile.Active].target[Target.Active].srt_pkt_size">
+    </div>
+  </div>
+  <div class="control-group" ng-show="ActiveJob.profile[Profile.Active].target[Target.Active].stream_type == 'SRT'">
+    <div class="col-xs-12 col-sm-3 col-md-3 col-lg-2">
+      <label for="SRTMaxBW" class="control-label">Maximum bandwidth</label>
+      <input id="SRTMaxBW" type="number" min="0" class="form-control input-xs" placeholder="bytes/seconds" ng-model="ActiveJob.profile[Profile.Active].target[Target.Active].srt_maxbw">
+    </div>
+  </div>
+  <div class="control-group" ng-show="ActiveJob.profile[Profile.Active].target[Target.Active].stream_type == 'SRT' && ActiveJob.profile[Profile.Active].target[Target.Active].srt_mode != 'caller'">
+    <div class="col-xs-12 col-sm-3 col-lg-2">
+      <label for="SRTIP" class="control-label">Encryption key length</label>
+      <select class="form-control select-xs" ng-model="ActiveJob.profile[Profile.Active].target[Target.Active].srt_pbkeylen" ng-options="pbkey.value as pbkey.alias for pbkey in SRTpbkeylen"></select>
+    </div>
+  </div>
+  <div class="control-group" ng-show="ActiveJob.profile[Profile.Active].target[Target.Active].stream_type == 'SRT' && (ActiveJob.profile[Profile.Active].target[Target.Active].srt_pbkeylen || ActiveJob.profile[Profile.Active].target[Target.Active].srt_mode == 'caller')">
+    <div class="col-xs-12 col-sm-3 col-md-3 col-lg-2">
+      <label for="SRTPass" class="control-label">Passphrase</label>
+      <input id="SRTPass" type="text" class="form-control input-xs" placeholder="length >=10" ng-model="ActiveJob.profile[Profile.Active].target[Target.Active].srt_passphrase">
+    </div>
+  </div>
+</div> <!-- row -->
+
+<div class="row">
+  <div class="control-group" ng-show="ActiveJob.profile[Profile.Active].target[Target.Active].stream_type == 'UDP' || ActiveJob.profile[Profile.Active].target[Target.Active].stream_type == 'SRT'">
+    <div class="col-xs-12 col-sm-3 col-md-3 col-lg-2">
+      <label for="muxrate" class="control-label">MPEGTS CBR Muxrate</label>
+      <input id="muxrate" type="number" min="128" class="form-control input-xs" placeholder="Blank = VBR" ng-model="ActiveJob.profile[Profile.Active].target[Target.Active].mpegts_muxrate">
+    </div>
+    <div class="col-xs-12 col-sm-3 col-md-3 col-lg-2">
+      <label for="pcr_period" class="control-label">MPEGTS PCR period</label>
+      <input id="pcr_period" type="number" min="1" class="form-control input-xs" placeholder="PCR period (ms)" ng-model="ActiveJob.profile[Profile.Active].target[Target.Active].mpegts_pcr_period">
+    </div>
+    <div class="col-xs-12 col-sm-3 col-md-3 col-lg-2">
+      <label for="pat_period" class="control-label">MPEGTS PAT period</label>
+      <input id="pat_period" type="number" min="0.01" class="form-control input-xs" placeholder="PAT/PMT period (sec)" ng-model="ActiveJob.profile[Profile.Active].target[Target.Active].mpegts_pat_period">
+    </div>
+    <div class="col-xs-12 col-sm-3 col-md-3 col-lg-2">
+      <label for="sdt_period" class="control-label">MPEGTS SDT period</label>
+      <input id="sdt_period" type="number" min="0.01" class="form-control input-xs" placeholder="SDT period (sec)" ng-model="ActiveJob.profile[Profile.Active].target[Target.Active].mpegts_sdt_period">
+    </div>
+  </div>
+</div>
+<div class="row">
+  <div class="control-group">
+    <div class="col-xs-12 col-sm-4 col-md-3 checkbox-middle">
+      <label class="edit-title-options">
+        <input type="checkbox" ng-model="ActiveJob.profile[Profile.Active].target[Target.Active].mpegts_flags.resend_headers">
+        Reemit PAT/PMT (packet)
+      </label>
+    </div>
+  </div> <!-- control-group -->
+  <div class="control-group">
+    <div class="col-xs-12 col-sm-4 col-md-3 checkbox-middle">
+      <label class="edit-title-options">
+        <input type="checkbox" ng-model="ActiveJob.profile[Profile.Active].target[Target.Active].mpegts_flags.pat_pmt_at_frames">
+        Reemit PAT/PMT (frame)
+      </label>
+    </div>
+  </div> <!-- control-group -->
+  <div class="control-group">
+    <div class="col-xs-12 col-sm-4 col-md-3 checkbox-middle">
+      <label class="edit-title-options">
+        <input type="checkbox" ng-model="ActiveJob.profile[Profile.Active].target[Target.Active].mpegts_flags.latm">
+        AAC LATM packetization
+      </label>
+    </div>
+  </div> <!-- control-group -->
+  <div class="control-group">
+    <div class="col-xs-12 col-sm-4 col-md-3 checkbox-middle">
+      <label class="edit-title-options">
+        <input type="checkbox" ng-model="ActiveJob.profile[Profile.Active].target[Target.Active].mpegts_flags.system_b">
+        System B (DVB)
+      </label>
+    </div>
+  </div> <!-- control-group -->
+  <div class="control-group">
+    <div class="col-xs-12 col-sm-4 col-md-3 checkbox-middle">
+      <label class="edit-title-options">
+        <input type="checkbox" ng-model="ActiveJob.profile[Profile.Active].target[Target.Active].mpegts_flags.initial_discontinuity">
+        Initial packet discontinuity
+      </label>
+    </div>
+  </div> <!-- control-group -->
+</div> <!-- row -->
+<div class="row">
+  <div class="edit-headline">
+    <span class="edit-headline-text">Metadata</span>
+  </div>
+  <div class="control-group">
+    <div class="col-xs-12 col-sm-3 col-md-3 col-lg-2">
+      <label for="md_sp" class="control-label">Service provider</label>
+      <input id="md_sp" type="text" class="form-control input-xs" placeholder="text" ng-model="ActiveJob.profile[Profile.Active].stream_metadata.service_provider">
+    </div>
+  </div>
+  <div class="control-group">
+    <div class="col-xs-12 col-sm-3 col-md-3 col-lg-2">
+      <label for="md_sn" class="control-label">Service name</label>
+      <input id="md_sn" type="text" class="form-control input-xs" placeholder="text" ng-model="ActiveJob.profile[Profile.Active].stream_metadata.service_name">
+    </div>
+  </div>
+</div> <!-- row -->

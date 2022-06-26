@@ -1,0 +1,12 @@
+/opt/pipencoder-base/logs/jobs/*.log
+/opt/pipencoder-base/logs/errors/*.log
+/opt/pipencoder-base/logs/system/*.log
+{
+  daily
+  rotate 2
+  copytruncate
+  delaycompress
+  notifempty
+  missingok
+  size 100M
+}

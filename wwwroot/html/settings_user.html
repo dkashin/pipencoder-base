@@ -1,0 +1,46 @@
+
+<div class="col-md-12 col-lg-6">
+  <div class="panel panel-default">
+    <div class="panel-heading">{{ User.Header }}</div>
+    <div class="panel-body">
+      <div class="row" ng-hide="User.Show">
+        <div class="col-xs-6 col-sm-8 col-md-6 col-lg-6">
+          <select ng-disabled="User.Confirm.Delete || !UsersList[0] || User.Confirm.Submit" class="form-control" ng-model="User.Selected" ng-options="UL as (UL.username + (UL.admin ? ' [admin]' : '')) for UL in UsersList">
+          </select>
+        </div>
+        <span ng-hide="User.Confirm.Delete || User.Confirm.Submit">
+          <button type="button" class="btn btn-main btn-main-green btn-tp btn-tp-gray glyphicon glyphicon-plus" title="Add" ng-click="UserAction('add')"></button>
+          <button type="button" ng-disabled="!UsersList[0]" class="btn btn-main btn-main-blue btn-tp btn-tp-gray glyphicon glyphicon-pencil" title="Edit" ng-click="UserAction('edit')" ></button>
+          <button type="button" ng-disabled="!UsersList[0]" class="btn btn-main btn-main-red btn-tp btn-tp-gray glyphicon glyphicon-remove" title="Delete" ng-click="User.Confirm.Delete = true"></button>
+        </span>
+        <span ng-show="User.Confirm.Submit" class="settings-working"><i class="fa fa-cog fa-spin"></i>&nbsp&nbspWorking...</span>
+        <span ng-show="User.Confirm.Delete && !User.Confirm.Submit">
+          <button type="button" class="btn btn-main btn-main-red" title="Delete" ng-click="UserManage('delete')">DELETE</button>
+          <button type="button" class="btn btn-main btn-main-gray" title="Cancel" ng-click="User.Confirm.Delete = false">CANCEL</button>
+        </span>
+      </div>
+      <form class="form-horizontal" ng-submit="UserManage(User.Action)">
+        <div ng-show="User.Show" ng-init="User.Show = false">
+          <div class="form-group">
+            <div class="col-sm-5 col-md-5">
+              <label>Username</label>
+              <input type="text" class="form-control" ng-model="User.Selected.username" required>
+            </div>
+            <div class="col-sm-5 col-md-4">
+              <label>Password</label>
+              <input type="password" autocomplete="off" class="form-control" ng-model="User.Selected.password" placeholder="{{ User.PasswordMsg }}">
+            </div>
+            <div class="col-sm-2 col-md-3 checkbox-label">
+              <label for="uadmin">
+                <input id="uadmin" type="checkbox" ng-model="User.Selected.admin" ng-checked="User.Selected.admin">
+                Admin
+              </label>
+            </div>
+          </div>
+          <button type="submit" class="btn btn-main btn-main-green" title="Save">SAVE</button>
+          <button type="button" class="btn btn-main btn-main-gray" title="Cancel" ng-click="UserAction('cancel')">CANCEL</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

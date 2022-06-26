@@ -1,0 +1,17 @@
+{
+  "vcustom": "",
+  "name": "HEVC 650",
+  "vcodec": "libx265",
+  "vbitrate": 650,
+  "keyframes": 2,
+  "subsample": "yuv420p",
+  "minrate": 650,
+  "maxrate": 650,
+  "vbuffer": 1000,
+  "vpreset": "veryfast",
+  "zerolatency": false,
+  "type": "video",
+  "gop": 150,
+  "keyint_min": 75,
+  "description": "System preset"
+}

@@ -1,0 +1,54 @@
+
+<div class="row col-xs-12">
+  <div class="col-xs-6 col-sm-2">
+    <label for="PP">Jobs</label>
+    <input id="PP" class="form-control input-xs" type="number" min="1" ng-change="JobListPerPageReset()" ng-model="GUI.Jobs.PerPage">
+  </div>
+  <div class="col-xs-6 col-sm-4">
+    <label>Sort by</label>
+    <div class="input-group">
+      <select class="form-control select-xs" ng-model="GUI.Jobs.SortBy" ng-change="JobListFilterChange()">
+        <option ng-repeat="Filter in FilterList track by $index" ng-show="Filter.role != 'filter'" value="{{ Filter.field }}">{{ Filter.alias }}</option>
+      </select>
+      <div class="input-group-btn">
+        <a class="btn btn-order-by" href="" ng-click="JobListRunSortBy(GUI.Jobs.SortBy)" title="{{ 'order: ' + GUI.Jobs.SortByOrder }}">
+          <i class="fa" ng-class="{ 'fa-sort-amount-asc': GUI.Jobs.SortByOrder == 'asc', 'fa-sort-amount-desc': GUI.Jobs.SortByOrder == 'desc' }"></i>
+        </a>
+      </div>
+    </div>
+  </div>
+  <div class="col-xs-12 col-sm-6">
+    <label>Quick filters</label>
+    <div>
+      <button type="button" class="btn btn-main btn-main-blue btn-tp btn-text-blue" title="ALL" ng-click="JobListFiltersDefault()">ALL: {{ Stats.Jobs.all }}</button>
+      <button type="button" class="btn btn-main btn-main-green" ng-class="{ 'btn-tp btn-tp-green': !GUI.Jobs.Filters.Quick.OK }" title="OK" ng-click="JobListQuickFilter('run_status', 'OK')">OK: {{ Stats.Jobs.ok }}</button>
+      <button type="button" class="btn btn-main btn-main-red" ng-class="{ 'btn-tp btn-tp-red': !GUI.Jobs.Filters.Quick.ERR }" title="Errors" ng-click="JobListQuickFilter('run_status', 'ERR')">ERR: {{ Stats.Jobs.err_src + Stats.Jobs.err_enc }}</button>
+      <button type="button" class="btn btn-main btn-main-yellow" ng-class="{ 'btn-tp btn-tp-yellow': !GUI.Jobs.Filters.Quick.UPD }" title="Update" ng-click="JobListQuickFilter('run_status', 'UPD')">UPD: {{ Stats.Jobs.upd }}</button>
+      <button type="button" class="btn btn-main btn-main-gray" ng-class="{ 'btn-tp btn-tp-gray': !GUI.Jobs.Filters.Quick.OFF }" title="OFF" ng-click="JobListQuickFilter('run_status', 'OFF')">OFF: {{ Stats.Jobs.off }}</button>
+    </div>
+  </div>
+</div>
+
+<div uib-collapse="!GUI.Jobs.Filters.Show">
+  <div class="col-xs-12">
+    <label class="filter-label">Filters</label>
+    <div ng-repeat="JobFilter in GUI.Jobs.Filters.List track by $index">
+      <div class="row filter-block">
+        <span class="col-xs-12 col-sm-4">
+          <select class="form-control select-xs" ng-model="JobFilter.field" ng-change="JobListFilterSelect(JobFilter)">
+            <option ng-repeat="Filter in FilterList track by $index" ng-show="Filter.role != 'sort_by'" value="{{ Filter.field }}">{{ Filter.alias }}</option>
+          </select>
+        </span>
+        <span class="col-xs-12 col-sm-4">
+          <input ng-hide="FilterList[JobFilter.field].options" type="text" class="form-control input-xs" ng-model="JobFilter.value" ng-change="JobListFilterChange()">
+          <select ng-show="FilterList[JobFilter.field].options" class="form-control select-xs" ng-model="JobFilter.value" ng-change="JobListFilterChange()" ng-options="options.value as options.alias for options in FilterList[JobFilter.field].options"></select>
+        </span>
+        <span class="col-xs-5 col-sm-2">
+          <select class="form-control select-xs" ng-model="JobFilter.type" ng-change="JobListFilterChange()" ng-options="type.value as type.alias for type in FilterTypes"></select>
+        </span>
+        <button type="button" class="btn btn-main btn-main-red btn-tp btn-tp-gray glyphicon glyphicon-minus" title="Delete" ng-show="!($first && $last) || JobFilter.value" ng-click="JobListDeleteFilter($index, JobFilter)"></button>
+        <button type="button" class="btn btn-main btn-main-green btn-tp btn-tp-gray glyphicon glyphicon-plus" title="Add" ng-show="$last" ng-click="JobListAddFilter()"></button>
+      </div>
+    </div>
+  </div>
+</div>

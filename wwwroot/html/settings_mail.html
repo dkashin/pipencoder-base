@@ -1,0 +1,32 @@
+
+<div class="row">
+  <div class="settings-box">
+    <span class="settings-box-title">SMTP Mail server</span>
+  </div>
+  <div class="control-group">
+    <div class="col-xs-6 col-sm-8 col-md-3 col-lg-3 ">
+      <label for="SMTPHost" class="control-label">Host</label>
+      <input id="SMTPHost" type="text" class="form-control input-xs" placeholder="localhost or domain" ng-model="Settings.smtp_host" required>
+    </div>
+    <div class="col-xs-6 col-sm-4 col-md-2 col-lg-1">
+      <label for="SMTPPort" class="control-label">Port</label>
+      <input id="SMTPPort" type="number" min="1" class="form-control input-xs" placeholder="integer" ng-model="Settings.smtp_port" required>
+    </div>
+    <div class="col-xs-6 col-sm-4 col-md-3 col-lg-3">
+      <label for="SMTPUser" class="control-label">User</label>
+      <input id="SMTPUser" type="text" class="form-control input-xs" placeholder="username" ng-model="Settings.smtp_user" required>
+    </div>
+    <div class="col-xs-6 col-sm-4 col-md-3 col-lg-3">
+      <label for="SMTPPass" class="control-label">Password</label>
+      <input id="SMTPPass" type="password" autocomplete="off" class="form-control input-xs" placeholder="password" ng-model="Settings.smtp_pass">
+    </div>
+    <div class="col-xs-3 col-sm-2 col-md-2 col-lg-1">
+      <input id="SMTP_SSL" type="checkbox" ng-model="Settings.smtp_ssl">
+      <label for="SMTP_SSL" class="control-label checkbox-label">SSL</label>
+    </div>
+    <div class="col-xs-3 col-sm-2 col-md-2 col-lg-1">
+      <input id="SMTP_TLS" type="checkbox" ng-model="Settings.smtp_tls">
+      <label for="SMTP_TLS" class="control-label checkbox-label">TLS</label>
+    </div>
+  </div>
+</div> <!-- row -->

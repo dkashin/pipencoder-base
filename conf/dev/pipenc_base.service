@@ -1,0 +1,20 @@
+[Unit]
+Description=Pipencoder Service
+After=syslog.target
+
+[Service]
+User=kashin
+Group=kashin
+WorkingDirectory=/home/kashin/Dev/pipencoder/pipencoder-base/app
+EnvironmentFile=/home/kashin/Dev/pipencoder/pipencoder-base/conf/dev/default.env
+ExecStart=/home/kashin/Dev/pipencoder/pipencoder-base/venv/bin/uwsgi -c ../conf/dev/pipenc_base_uwsgi.ini
+Restart=always
+KillSignal=SIGQUIT
+KillMode=process
+Type=idle
+StandardError=syslog
+NotifyAccess=all
+LimitNOFILE=64000
+
+[Install]
+WantedBy=multi-user.target

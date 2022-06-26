@@ -1,0 +1,43 @@
+
+<nav class="navbar navbar-default nav-custom" role="navigation">
+  <div>
+    <p ng-hide="ContentLoaded" class="navbar-loading">Loading content</p>
+    <ul class="nav navbar-nav navbar-actions" ng-show="ContentLoaded">
+      <!-- <li class="hidden-xs logo-divider">/</li> -->
+      <li class="navbar-chapter hidden-xs logo-divider">{{ Chapters }}</li>
+      <li class="navbar-glyphs">
+        <a ng-click="" href="">
+          <i class="fa fa-recycle fa-2x"></i>
+          <div class="navbar-captions">Clear</div>
+        </a>
+      </li>
+    </ul>
+    <div uib-alert ng-class="'alert-' + (Alert.type || 'warning')" class="alert-main" ng-repeat="Alert in AF.Queue track by $index" ng-show="Alert.action == 'events'" close="AF.Close($index)" dismiss-on-timeout="3000">{{ Alert.msg }}</div>
+  </div> <!-- Loading content -->
+</nav>
+
+<div class="row">
+  <div class="col-xs-12">
+    <div ng-show="!ContentLoaded" class="content-loader">
+      <i class="fa fa-5x fa-cog fa-spin"></i>
+      <p>Please wait</p>
+    </div> <!-- content-loader -->
+    <div ng-show="ContentLoaded" class="content-wrap">
+      <div class="row" ng-include="'/html/global_message.html'"></div>
+      <div class="panel panel-default">
+        <div class="panel-body">
+          <div ng-show="EventsCounter">
+            <div class="row">
+              <div class="col-md-6 col-md-offset-3">
+                <div ng-include="'/html/events_update.html'" ng-if="Stats.Update.update_allowed"></div>
+              </div> <!-- col-md-6 col-md-offset-3 -->
+            </div> <!-- row -->
+          </div> <!-- EventsCounter -->
+          <div ng-hide="EventsCounter">
+            <p class="events-empty">No events to display</p>
+          </div> <!-- NoEvents -->
+        </div> <!-- panel-body -->
+      </div> <!-- panel-default -->
+    </div> <!-- content-wrap -->
+  </div> <!-- col-xs-12 -->
+</div> <!-- row -->

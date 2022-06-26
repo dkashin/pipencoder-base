@@ -1,0 +1,123 @@
+
+<div class="col-xs-12 col-sm-2 sidebar">
+  <div class="logo-style" ng-include="'/html/brand.html'"></div>
+<!-- TODO:
+  <div class="navbar-collapse collapse">
+  </div>
+-->
+  <ul class="nav nav-pills nav-stacked sidebar-fixed">
+    <li>
+      <a href="" class="col-md-12" ng-click="ServerStatShow()">
+        <i class="fa fa-bar-chart col-md-1 visible-sm nav-pills-glyph-big centering-block">
+          <div class="nav-pills-captions">Server
+            <span class="settings-softver">[v{{ Stats.Update.current_version }}]</span>
+          </div>
+        </i>
+        <i class="fa fa-bar-chart col-md-1 hidden-sm"></i>
+        <span class="col-md-9 col-md-offset-1 hidden-sm">Server
+          <span class="settings-softver">[v{{ Stats.Update.current_version }}]</span>
+        </span>
+        <p class="hidden-sm hidden-xs">&nbsp</p>
+      </a>
+      <a href="" class="col-md-12 sidebar-collapse">
+        <div uib-collapse="GUI.Navbar.StatCollapse">
+          <!--
+          <div ng-hide="StatsLoaded" class="centering-block">
+            <i class="fa fa-cog fa-2x fa-spin server-info-load"></i>
+            <p class="server-info-load-text">Please wait</p>
+          </div>
+          -->
+          <div>
+            <uib-progressbar class="active servers-stats" value="Stats.Hardware.cpu" type="{{ StatsColor(Stats.Hardware.cpu) }}">&nbspCPU:&nbsp{{ Stats.Hardware.cpu < 101 ? Stats.Hardware.cpu + '%' : 'No data' }}
+            </uib-progressbar>
+            <uib-progressbar class="active servers-stats" value="Stats.Hardware.ram" type="{{ StatsColor(Stats.Hardware.ram) }}">&nbspRAM:&nbsp{{ Stats.Hardware.ram < 101 ? Stats.Hardware.ram + '%' : 'No data' }}
+            </uib-progressbar>
+            <uib-progressbar class="active servers-stats" ng-hide="Stats.Hardware.gpu.dev_count" value="" type="off">&nbspGPU is not detected
+            </uib-progressbar>
+            <span ng-show="Stats.Hardware.gpu.dev_count">
+              <div class="servers-stats centering-block">
+                <select class="form-control select-xs nowrap" ng-change="SelectGPU(GUI.Navbar.StatGPUSelected)" ng-model="GUI.Navbar.StatGPUSelected" ng-options="GPU.idx as GPU.dev_name for GPU in Stats.GPUData"></select>
+              </div>
+              <uib-progressbar class="active servers-stats nowrap" value="Stats.GPUData[GUI.Navbar.StatGPUSelected].dev_opt.gpu" type="{{ StatsColor(Stats.GPUData[GUI.Navbar.StatGPUSelected].dev_opt.gpu) }}">&nbsp{{ Stats.GPUData[GUI.Navbar.StatGPUSelected].active ? 'GPU: ' + Stats.GPUData[GUI.Navbar.StatGPUSelected].dev_opt.gpu + '%' : 'Status: ' + Stats.GPUData[GUI.Navbar.StatGPUSelected].msg }}
+              </uib-progressbar>
+              <uib-progressbar ng-show="Stats.GPUData[GUI.Navbar.StatGPUSelected].active" class="active servers-stats nowrap" value="Stats.GPUData[GUI.Navbar.StatGPUSelected].dev_opt.gram" type="{{ StatsColor(Stats.GPUData[GUI.Navbar.StatGPUSelected].dev_opt.gram) }}">&nbspGRAM:&nbsp{{ Stats.GPUData[GUI.Navbar.StatGPUSelected].dev_opt.gram + '%' }}
+              </uib-progressbar>
+              <uib-progressbar ng-show="Stats.GPUData[GUI.Navbar.StatGPUSelected].active" class="active servers-stats nowrap" value="Stats.GPUData[GUI.Navbar.StatGPUSelected].dev_opt.dec_util" type="{{ StatsColor(Stats.GPUData[GUI.Navbar.StatGPUSelected].dev_opt.dec_util) }}">&nbspDecoder:&nbsp{{ Stats.GPUData[GUI.Navbar.StatGPUSelected].dev_opt.dec_util + '%' }}
+              </uib-progressbar>
+              <uib-progressbar ng-show="Stats.GPUData[GUI.Navbar.StatGPUSelected].active" class="active servers-stats nowrap" value="Stats.GPUData[GUI.Navbar.StatGPUSelected].dev_opt.enc_util" type="{{ StatsColor(Stats.GPUData[GUI.Navbar.StatGPUSelected].dev_opt.enc_util) }}">&nbspEncoder:&nbsp{{ Stats.GPUData[GUI.Navbar.StatGPUSelected].dev_opt.enc_util + '%' }}
+              </uib-progressbar>
+            </span>
+          </div>
+        </div>
+      </a>
+    </li>
+    <li ng-class="SideNavActive('jobs')">
+      <a href="/jobs" class="col-md-12">
+        <i class="fa fa-list-ul col-md-1 visible-sm nav-pills-glyph-big centering-block">
+          <div class="nav-pills-captions">Jobs</div>
+        </i>
+          <i class="fa fa-list-ul col-md-1 hidden-sm"></i>
+          <span class="col-md-9 col-md-offset-1 hidden-sm">Jobs</span>
+<!--
+        <div uib-collapse="SysStatsIsCollapsed">
+          <ul class="nav nav-pills nav-stacked centering-block">
+            <li>
+              <span class="badge sidebar-stats sidebar-stats-gray">ALL: {{ Stats.Jobs.all }}</span>
+              <span class="badge sidebar-stats sidebar-stats-green">OK: {{ Stats.Jobs.ok }}</span>
+              <span class="badge sidebar-stats sidebar-stats-red">ERR: {{ Stats.Jobs.err_src + Stats.Jobs.err_enc }}</span>
+            </li>
+          </ul>
+        </div>
+-->
+      </a>
+    </li>
+    <li ng-class="SideNavActive('events')">
+      <a href="/events" class="col-md-12">
+        <i class="fa fa-flag-checkered col-md-1 visible-sm nav-pills-glyph-big centering-block">
+          <div class="nav-pills-captions">Events
+            <span ng-show="EventsCounter" class="badge badge-alarm sidebar-alarm">{{ EventsCounter }}</span>
+          </div>
+        </i>
+          <i class="fa fa-flag-checkered col-md-1 hidden-sm"></i>
+          <span class="col-md-9 col-md-offset-1 hidden-sm">Events
+            <span ng-show="EventsCounter" class="badge badge-alarm sidebar-alarm">{{ EventsCounter }}</span>
+          </span>
+      </a>
+    </li>
+    <li ng-show="CurrentUser.isAdmin" ng-class="SideNavActive('settings')">
+      <a href="/settings" class="col-md-12">
+        <i class="fa fa-cogs col-md-1 visible-sm nav-pills-glyph-big centering-block">
+          <div class="nav-pills-captions">Settings</div>
+        </i>
+        <i class="fa fa-cogs col-md-1 hidden-sm"></i>
+        <span class="col-md-9 col-md-offset-1 hidden-sm">Settings</span>
+      </a>
+    </li>
+    <li class="visible-xs">
+      <a href="" ng-controller="AuthController" ng-click="Logout()" class="col-md-12">
+        <i class="fa fa-sign-out col-md-1"></i>
+        <span class="col-md-9 col-md-offset-1 nowrap">Logout
+          <span class="sidebar-username"><i class="fa fa-user"></i> {{ CurrentUser.Name }}</span>
+        </span>
+      </a>
+    </li>
+    <li class="sidebar-logout">
+      <hr class="sidebar-divider-logout hidden-xs">
+      <a href="" ng-controller="AuthController" ng-click="Logout()" class="col-md-12 hidden-xs">
+        <i class="fa fa-sign-out col-md-1 visible-sm nav-pills-glyph-big centering-block">
+          <div class="nav-pills-captions nowrap">
+            <span class="sidebar-username">
+              <i class="fa fa-user"></i> {{ CurrentUser.Name }}
+            </span>
+          </div>
+        </i>
+        <i class="fa fa-sign-out col-md-1 hidden-sm"></i>
+        <div class="col-md-9 col-md-offset-1 hidden-sm nowrap">Logout
+          <div class="sidebar-username">
+            <i class="fa fa-user"></i> {{ CurrentUser.Name }}
+          </div>
+        </div>
+      </a>
+    </li>
+  </ul>
+</div>

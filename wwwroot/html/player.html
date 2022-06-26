@@ -1,0 +1,30 @@
+
+<div class="modal-content">
+  <div class="modal-header">
+    <button type="button" class="close" ng-click="ModalClose()"><span>&times;</span></button>
+    <h3 class="modal-title">Preview</h3>
+  </div>
+  <div class="modal-body video-border">
+    <div ng-show="ShowPlayer" align="center" class="embed-responsive embed-responsive-16by9">
+      <vjsplayer></vjsplayer>
+    </div>
+    <div ng-hide="ShowPlayer">
+      <p class="events-empty">Selected media has no preview feature</p>
+    </div> <!-- NoEvents -->
+  </div>
+  <div class="modal-footer">
+    <div class="col-md-offset-1 col-md-10">
+      <div class="input-group">
+        <span class="input-group-addon" ng-show="DRMTagValue">
+          <span class="glyphicon glyphicon-lock glyphicon-drm"></span>
+          <span>{{ DRMTagValue }}</span>
+        </span>
+        <span class="input-group-addon player-url"> {{ SelectedURL.stream_type }}</span>
+        <select class="form-control" ng-model="SelectedURL" ng-options="URL as URL.url for URL in PreviewURL" ng-change="PlaySourceSelect(SelectedURL)"></select>PreviewURL
+        <span class="input-group-btn">
+          <button type="button" uib-tooltip="Copied!" tooltip-trigger="'focus'" tooltip-popup-close-delay="2000" tooltip-is-open="tooltipIsOpen" tooltip-placement="right" class="btn btn-main btn-main-input btn-main-green" ngclipboard data-clipboard-text="{{ SelectedURL.url }}" ngclipboard-success="tooltipIsOpen = true">Copy</button>
+        </span>
+      </div>
+    </div>
+  </div>
+</div>

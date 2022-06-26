@@ -1,0 +1,85 @@
+
+upstream pipenc_base {
+#  server localhost:8001;
+  server unix:/home/kashin/Dev/pipencoder/pipencoder-base/run/uwsgi.sock;
+}
+
+server {
+
+    listen 8077;
+    server_name media_transcoder;
+    root /home/kashin/Dev/pipencoder/pipencoder-base/wwwroot;
+
+    log_not_found off;
+    access_log off;
+    error_log /home/kashin/Dev/pipencoder/pipencoder-base/logs/system/nginx.error.log;
+
+    location / {
+        try_files $uri /index.html;
+    }
+
+    location /images {
+        expires 1d;
+    }
+
+    location /media {
+        alias /home/kashin/Dev/pipencoder/pipencoder-base/media/;
+        types {
+            application/vnd.apple.mpegurl m3u8;
+            video/mp2t ts;
+        }
+        add_header 'Access-Control-Allow-Origin' '*';
+        add_header 'Access-Control-Allow-Credentials' 'true';
+        add_header 'Access-Control-Allow-Methods' 'GET, POST, OPTIONS';
+        add_header Cache-Control no-cache;
+        expires off;
+    }
+
+    location /api {
+        uwsgi_pass pipenc_base;
+        include uwsgi_params;
+        proxy_connect_timeout 60;
+        proxy_send_timeout 60;
+        proxy_read_timeout 60;
+        send_timeout 60;
+        uwsgi_read_timeout 60;
+    }
+
+    location ~* .(htm|html|css|js|txt|json) {
+        add_header Cache-Control no-cache;
+        expires off;
+    }
+
+}
+
+server {
+
+    listen 80;
+
+    location /hls {
+        root /home/kashin/Dev/pipencoder/pipencoder-base/media;
+        client_body_temp_path /home/kashin/Dev/pipencoder/pipencoder-base/media/tmp;
+        client_max_body_size 1000m;
+        client_body_buffer_size  500m;
+#        dav_methods PUT DELETE MKCOL COPY MOVE;
+#        dav_ext_methods PROPFIND OPTIONS;
+#        create_full_put_path on;
+#        dav_access user:rw group:rw all:rw;
+#        autoindex on;
+
+        # You can specify the access restrictions.
+        # In this case, only people on the 141.142 network can write/delete/etc.
+        # Everyone else can view.
+        #limit_except GET PROPFIND OPTIONS {
+        #   allow 141.142.0.0/16;
+        #   deny all;
+        #}
+#        allow all;
+    }
+
+    location ~* .(htm|html|css|js|txt|json) {
+        add_header Cache-Control no-cache;
+        expires off;
+    }
+
+}

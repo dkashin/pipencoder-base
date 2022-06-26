@@ -1,0 +1,19 @@
+{
+  "zerolatency": false,
+  "vcustom": "",
+  "name": "H264 2500",
+  "cc_copy": true,
+  "vcodec": "libx264",
+  "vbitrate": 2500,
+  "keyframes": 2,
+  "vprofile": "main",
+  "subsample": "yuv420p",
+  "minrate": 2500,
+  "maxrate": 2500,
+  "vbuffer": 3700,
+  "vpreset": "superfast",
+  "type": "video",
+  "gop": 150,
+  "keyint_min": 75,
+  "description": "System preset"
+}

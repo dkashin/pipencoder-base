@@ -1,0 +1,86 @@
+
+<div class="row">
+  <div class="settings-box">
+    <span class="settings-box-title">Failover</span>
+  </div>
+  <div class="control-group">
+    <div class="col-xs-12 col-sm-3 col-lg-2">
+      <label>Type</label>
+      <select class="form-control select-xs" ng-model="Failover.Media.Type" ng-options="FOT for FOT in Failover.Types" ng-change="FailoverSelect(Failover)"></select>
+    </div>
+    <div ng-class="{ 'col-xs-10 col-sm-7 col-md-6 col-lg-5': Failover.Media.Type == 'Clip', 'col-xs-12 col-sm-9 col-md-8 col-lg-6': Failover.Media.Type != 'Clip' }">
+      <label>Media</label>
+      <div >
+        <input type="url" class="form-control input-xs" ng-show="Failover.Media.Type == 'URL'" placeholder="Media URL" ng-model="Failover.Media.URL" ng-change="FailoverSelect(Failover)">
+        <select class="form-control select-xs" ng-show="Failover.Media.Type == 'Clip'" ng-model="Failover.Media.Clip" ng-options="clip for clip in MediaAssets.clips | orderBy" ng-change="FailoverSelect(Failover)"></select>
+        <select class="form-control select-xs" ng-show="Failover.Media.Type == 'Image'" ng-model="Failover.Media.Image" ng-options="image for image in MediaAssets.images | orderBy" ng-change="FailoverSelect(Failover)"></select>
+      </div>
+    </div>
+    <div class="col-xs-2 checkbox-label" ng-show="Failover.Media.Type == 'Clip'">
+      <label>
+        <input type="checkbox" ng-model="Settings.default_fail_loop">
+        Loop
+      </label>
+    </div>
+  </div>
+</div> <!-- row -->
+<div class="row" ng-show="Failover.UDPShow && Failover.Media.Type == 'URL'">
+  <div class="control-group">
+    <div class="col-xs-6 col-sm-4 col-lg-3">
+      <label class="control-label">UDP Buffer</label>
+      <input type="number" min="128" class="form-control input-xs" placeholder="kilobytes" ng-model="Settings.default_fail_udp_buffer">
+    </div>
+  </div>
+  <div class="control-group">
+    <div class="col-xs-6 col-sm-4 col-lg-3">
+      <label class="control-label">UDP Timeout</label>
+      <input type="number" min="1" class="form-control input-xs" placeholder="seconds" ng-model="Settings.default_fail_udp_timeout">
+    </div>
+  </div>
+  <div class="control-group">
+    <div class="col-xs-12 col-sm-4 checkbox-label">
+      <label>
+        <input type="checkbox" ng-model="Settings.default_fail_udp_overrun">
+        UDP Overrun Survive
+      </label>
+    </div>
+  </div>
+</div>
+<div class="row" ng-show="Failover.Media.Type != 'Image'">
+  <div class="control-group">
+    <div class="col-xs-6 col-sm-4 col-md-3" ng-show="Failover.HTTPShow">
+      <label>
+        <input type="checkbox" ng-model="Settings.default_fail_http_reconnect">
+        Reconnect on fail
+      </label>
+    </div> <!-- col-xs-12 col-sm-4 checkbox-label -->
+  </div> <!-- control-group -->
+  <div class="control-group">
+    <div class="col-xs-6 col-sm-4 col-md-3" ng-show="Failover.MPEGTSShow">
+      <label>
+        <input type="checkbox" ng-model="Settings.default_fail_merge_pmt_versions">
+        Megre PMT versions
+      </label>
+    </div> <!-- col-xs-12 col-sm-4 checkbox-label -->
+  </div> <!-- control-group -->
+</div> <!-- row -->
+<div class="row" ng-show="Failover.Media.Type != 'Image'">
+  <div class="control-group">
+    <div class="col-xs-6 col-sm-4 col-md-3">
+      <label class="control-label">Video decoder</label>
+      <select class="form-control select-xs" ng-model="Settings.default_fail_decoder" ng-options="decoder for decoder in Failover.VideoDecoders"></select>
+    </div> <!-- col-xs-6 col-sm-4 col-lg-3 -->
+  </div> <!-- control-group -->
+  <div class="control-group">
+    <div class="col-xs-6 col-sm-4 col-md-3">
+      <label class="control-label">Decoder error detect</label>
+      <select class="form-control select-xs" ng-model="Settings.default_fail_decoder_err_detect" ng-options="decoder_err for decoder_err in Failover.DecoderErrDetect"></select>
+    </div> <!-- col-xs-6 col-sm-4 col-lg-3 -->
+  </div> <!-- control-group -->
+</div> <!-- row -->
+<div class="row">
+  <div class="col-xs-12 col-sm-4 col-md-3 col-lg-2" ng-repeat="PID in Failover.PIDMap">
+    <label>{{ PID.Type }} PID</label>
+    <input type="text" class="form-control input-xs" placeholder="#PID / Track" ng-model="Settings[PID.dbName]">
+  </div>
+</div> <!-- row -->

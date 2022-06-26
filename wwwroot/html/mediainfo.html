@@ -1,0 +1,160 @@
+<!--
+  <div class="mi-stream-list" ng-show="MediaInfo.ShowYT">
+    <h4>Streams</h4>
+    <table>
+      <thead>
+        <tr>
+          <th></th>
+          <th>ID</th>
+          <th>vCodec</th>
+          <th>Frame</th>
+          <th>FPS</th>
+          <th>aCodec</th>
+          <th>aBitrate</th>
+          <th>Protocol</th>
+          <th>Valid for</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="row-select" ng-repeat="Stream in MediaInfo.Streams track by $index" ng-click="MediaInfoStreamSelectYT(Stream)">
+          <td class="checkbox-select">
+            <span>
+              <input type="checkbox" ng-model="Stream.Selected" ng-click="MediaInfoStreamSelectYT(Stream)">
+            </span>
+          </td>
+          <td>{{ Stream.format_id || 'N/A' }}</td>
+          <td>{{ Stream.vcodec || 'N/A' }}</td>
+          <td>{{ Stream.frame_size || 'N/A' }}</td>
+          <td>{{ Stream.fps || 'N/A' }}</td>
+          <td>{{ Stream.acodec || 'N/A' }}</td>
+          <td>{{ Stream.abr || 'N/A' }}</td>
+          <td>{{ Stream.protocol || 'N/A' }}</td>
+          <td>{{ Stream.valid_for || 'N/A' }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div> <!-- MediaInfo.ShowYT -->
+
+  <div ng-show="MediaInfo.Show && MediaInfo.Programs" ng-repeat="MIProgram in MediaInfo.Programs track by $index">
+    <div class="list-group list-fixes">
+      <a ng-show="MIProgram.program_id" class="list-group-item list-elements" ng-click="MIProgram.isCollapsed = !MIProgram.isCollapsed">
+        [ {{ MIProgram.isCollapsed ? '+' : '-' }}]
+        Program [ ID: {{ MIProgram.program_id || 'N/A' }}
+        {{ MIProgram.pcr_pid ? ', PCR PID: ' + MIProgram.pcr_pid : null }}
+        {{ MIProgram.pmt_pid ? ', PMT PID: ' + MIProgram.pmt_pid : null }}
+        {{ MIProgram.valid_for ? ', Valid for: ' + MIProgram.valid_for : null }} ]
+      </a>
+      <div uib-collapse="MIProgram.isCollapsed">
+        <div class="mi-stream-list">
+          <div ng-hide="MIProgram.Has.Video">
+            <h4>Source has no video streams</h4>
+          </div>
+          <div ng-show="MIProgram.Has.Video">
+            <h4>Video streams</h4>
+            <table>
+              <thead>
+                <tr>
+                  <th></th>
+                  <th>PID</th>
+                  <th>Codec</th>
+                  <th>Profile</th>
+                  <th>Level</th>
+                  <th>Frame</th>
+                  <th>DAR</th>
+                  <th>FPS</th>
+                  <th>Sampling</th>
+                  <th>Bits</th>
+                </tr>
+                </thead>
+                <tbody>
+                  <tr class="row-select" ng-repeat="vStream in MIProgram.streams | filter: ({ codec_type: 'video' })" ng-click="MediaInfoStreamSelect(MIProgram, vStream, Profile.Active)">
+                    <td class="checkbox-select">
+                      <span>
+                        <input type="checkbox" ng-model="vStream.Selected" ng-click="MediaInfoStreamSelect(MIProgram, vStream, Profile.Active)">
+                      </span>
+                    </td>
+                    <td>{{ (vStream.id == null) ? vStream.index : ('#' + vStream.id) }}</td>
+                    <td>{{ vStream.codec_name ? vStream.codec_name : 'N/A' }}</td>
+                    <td>{{ vStream.profile ? vStream.profile : 'N/A' }}</td>
+                    <td>{{ vStream.level ? vStream.level : 'N/A' }}</td>
+                    <td>{{ ((vStream.height) || (vStream.width)) ? (vStream.width + 'x' + vStream.height) : 'N/A' }}</td>
+                    <td>{{ (vStream.display_aspect_ratio) ? vStream.display_aspect_ratio : 'N/A' }}</td>
+                    <td>{{ (vStream.r_frame_rate) ? vStream.r_frame_rate : 'N/A' }}</td>
+                    <td>{{ (vStream.pix_fmt) ? vStream.pix_fmt : 'N/A' }}</td>
+                    <td>{{ (vStream.bits_per_raw_sample) ? vStream.bits_per_raw_sample : 'N/A' }}</td>
+                  </tr>
+                </tbody>
+            </table>
+          </div> <!-- MIProgram.Has.Video -->
+          <hr>
+          <div ng-hide="MIProgram.Has.Audio">
+            <h4>Source has no audio streams</h4>
+          </div>
+          <div ng-show="MIProgram.Has.Audio">
+            <h4>Audio streams</h4>
+            <table>
+              <thead>
+                <tr>
+                  <th></th>
+                  <th>PID</th>
+                  <th>Language</th>
+                  <th>Codec</th>
+                  <th>Profile</th>
+                  <th>Channels</th>
+                  <th>Layout</th>
+                  <th>Bitrate</th>
+                  <th>S/Rate</th>
+                  <th>S/Format</th>
+                </tr>
+                </thead>
+                <tbody>
+                  <tr class="row-select" ng-repeat="aStream in MIProgram.streams | filter: ({ codec_type: 'audio' })" ng-click="MediaInfoStreamSelect(MIProgram, aStream, Profile.Active)">
+                    <td class="checkbox-select">
+                      <span>
+                        <input type="checkbox" ng-model="aStream.Selected" ng-click="MediaInfoStreamSelect(MIProgram, aStream, Profile.Active)">
+                      </span>
+                    </td>
+                    <td>{{ (aStream.id == null) ? aStream.index : ('#' + aStream.id) }}</td>
+                    <td>{{ aStream.tags.language ? aStream.tags.language : 'N/A' }}</td>
+                    <td>{{ aStream.codec_name ? aStream.codec_name : 'N/A' }}</td>
+                    <td>{{ aStream.profile ? aStream.profile : 'N/A' }}</td>
+                    <td>{{ aStream.channels ? aStream.channels : 'N/A' }}</td>
+                    <td>{{ aStream.channel_layout ? aStream.channel_layout : 'N/A' }}</td>
+                    <td>{{ (aStream.bit_rate) ? aStream.bit_rate + 'k' : 'N/A' }}</td>
+                    <td>{{ (aStream.sample_rate) ? aStream.sample_rate : 'N/A' }}</td>
+                    <td>{{ (aStream.sample_fmt) ? aStream.sample_fmt : 'N/A' }}</td>
+                  </tr>
+                </tbody>
+            </table>
+          </div> <!-- MIProgram.Has.Audio -->
+          <hr>
+          <div ng-hide="MIProgram.Has.BinData">
+            <h4>Source has no extra data streams</h4>
+          </div>
+          <div ng-show="MIProgram.Has.BinData">
+            <h4>Data streams</h4>
+            <table>
+              <thead>
+                <tr>
+                  <th></th>
+                  <th>PID</th>
+                  <th>Codec</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr class="row-select" ng-repeat="dStream in MIProgram.streams | filter: ({ codec_type: 'data' })" ng-click="MediaInfoStreamSelect(MIProgram, dStream, Profile.Active)">
+                  <td class="checkbox-select">
+                    <span>
+                      <input type="checkbox" ng-model="dStream.Selected" ng-click="MediaInfoStreamSelect(MIProgram, dStream, Profile.Active)">
+                    </span>
+                  </td>
+                  <td>{{ (dStream.id == null) ? dStream.index : ('#' + dStream.id) }}</td>
+                  <td>{{ dStream.codec_name ? dStream.codec_name : 'N/A' }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div> <!-- MIProgram.Has.BinData -->
+        </div> <!-- mi-stream-list -->
+      </div> <!-- uib-collapse -->
+    </div> <!-- list-group list-fixes -->
+  </div> <!-- MediaInfo.Programs -->

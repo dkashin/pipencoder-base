@@ -1,0 +1,31 @@
+
+<div class="col-xs-10 col-xs-offset-1 col-sm-5 col-sm-offset-4 col-md-4 col-md-offset-4 col-lg-3 col-lg-offset-4">
+  <div class="login">
+    <img class="login-logo" src="/images/logo_pipencoder.png" alt="Pipencoder">
+<!--
+    <img class="logo-image" src="/images/logo_medialink.png" alt="MediaLink">
+    <span class="main-title main-title-c1 centering-block">
+      <span class="main-title-c1"></span>uEncoder | <span class="main-title-c2">Base</span>
+    </span>
+-->
+    <hr class="login-divider">
+    <form class="form" ng-submit="Login(AuthForm)">
+      <div class="form-group">
+        <label>Username</label>
+        <input type="text" class="form-control" name="username" ng-model="AuthForm.Data.Username" ng-disabled="AuthForm.Submit" required>
+      </div>
+      <div class="form-group">
+        <label>Password</label>
+        <input type="password" autocomplete="off" class="form-control" name="password" ng-model="AuthForm.Data.Password" ng-disabled="AuthForm.Submit" required>
+      </div>
+      <button type="submit" class="btn btn-job-body-cancel" ng-disabled="AuthForm.Submit">Login</button>
+<!--
+      <div class="form-group pull-right">
+        <input id="AuthSave" type="checkbox" ng-model="AuthForm.Data.KeepLogin" ng-checked="AuthForm.Data.KeepLogin">
+        <label for="AuthSave" class="control-label">Keep logged-in</label>
+      </div>
+-->
+    </form>
+    <div uib-alert ng-class="'alert-' + (Alert.type || 'warning')" class="alert-login" ng-repeat="Alert in AF.Queue track by $index" ng-show="Alert.action == 'auth'" close="AF.Close($index)" dismiss-on-timeout="3000">{{ Alert.msg }}</div>
+  </div>
+</div>

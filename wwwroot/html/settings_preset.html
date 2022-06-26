@@ -1,0 +1,54 @@
+<div class="row">
+  <div class="col-md-12 col-lg-6" ng-repeat="Preset in AVPresets track by $index">
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <span>{{ Preset.Header }}</span>
+        <span ng-show="Preset.Confirm || (!Preset.Submit && Preset.Action == 'Update')" class="settings-warning">
+          (This action will affect associated jobs!)
+        </span>
+      </div>
+      <div class="panel-body">
+        <div class="row" ng-hide="Preset.Show">
+          <div class="col-xs-6 col-sm-8 col-md-6">
+            <select ng-disabled="Preset.Confirm || Preset.Submit" class="form-control" ng-model="Preset.Data" ng-options="PL.name for PL in Preset.List | filter: PresetHide('Copy')"></select>
+          </div>
+          <span ng-hide="Preset.Confirm || Preset.Submit">
+            <button type="button" class="btn btn-main btn-main-green btn-tp btn-tp-gray glyphicon glyphicon-plus" title="Add" ng-click="PresetManager(Preset, 'Add')"></button>
+            <button type="button" class="btn btn-main btn-main-blue btn-tp btn-tp-gray glyphicon glyphicon-pencil" title="Update" ng-click="PresetManager(Preset, 'Update')"></button>
+            <button type="button" class="btn btn-main btn-main-red btn-tp btn-tp-gray glyphicon glyphicon-remove" title="Delete" ng-click="PresetManager(Preset, 'Delete')"></button>
+          </span>
+          <span ng-show="Preset.Submit" class="settings-working"><i class="fa fa-cog fa-spin"></i>&nbsp&nbspWorking...</span>
+          <span ng-show="Preset.Confirm && !Preset.Submit">
+            <button type="button" class="btn btn-main btn-main-red" title="Delete" ng-click="PresetSubmit(Preset, 'Delete')">DELETE</button>
+            <button type="button" class="btn btn-main btn-main-gray" title="Cancel" ng-click="Preset.Confirm = false">CANCEL</button>
+          </span>
+        </div>
+        <form class="form-horizontal" ng-submit="PresetSubmit(Preset, Preset.Action)" ng-show="Preset.Show" >
+          <div class="form-group">
+            <div class="col-xs-12 col-sm-6">
+              <label class="control-label">Name</label>
+              <input type="text" class="form-control input-xs" placeholder="preset name" ng-model="Preset.Data.name" required>
+            </div>
+            <div class="col-xs-12 col-sm-6">
+              <label class="control-label">Description</label>
+              <input type="text" class="form-control input-xs" placeholder="description" ng-model="Preset.Data.description">
+            </div>
+            <div class="col-xs-12 col-sm-4">
+              <label class="control-label">Codec</label>
+              <select class="form-control select-xs" ng-model="Preset.Data[Preset.Codecs.Model]" ng-options="Codec.Value as Codec.Alias for Codec in Preset.Codecs.Values" ng-change="PresetCodecChange(Preset, Preset.Data[Preset.Codecs.Model])"></select>
+            </div>
+            <div ng-repeat="CodecOption in Preset.CodecOptions">
+              <div class="col-xs-12 col-sm-4" ng-if="PresetOptionsShow(CodecOption.CodecList, Preset.Data[Preset.Codecs.Model])">
+                <label class="control-label">{{ CodecOption.Name }}</label>
+                <select class="form-control select-xs" ng-model="Preset.Data[CodecOption.Model]" ng-options="Option.Value as Option.Alias for Option in CodecOption.Values | filter: PresetOptionsFilter(Preset.Data[Preset.Codecs.Model])" ng-if="CodecOption.Type == 'select'"></select>
+                <input type="{{ (CodecOption.Model == 'vcustom' || CodecOption.Model == 'acustom' || CodecOption.Model == 'fps') ? 'text' : 'number' }}" class="form-control input-xs" placeholder="{{ CodecOption.Info }}" ng-model="Preset.Data[CodecOption.Model]" ng-if="CodecOption.Type == 'input'">
+              </div>
+            </div>
+          </div> <!-- form-group-->
+          <button type="submit" class="btn btn-main btn-main-green" title="Save">SAVE</button>
+          <button type="button" class="btn btn-main btn-main-gray" title="Cancel" ng-click="PresetCancel(Preset)">CANCEL</button>
+        </form>
+      </div> <!-- panel-body -->
+    </div> <!-- panel panel-default -->
+  </div> <!-- col-xs-6 -->
+</div> <!-- row -->
