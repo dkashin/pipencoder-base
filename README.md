@@ -6,4 +6,4 @@ Mix and match open-soure and commercial software in your workflow.
 
 Project comes with AngularJS GUI and FFMPEG powerful presets out of the box.
 
-Demo: demo.pipencoder.com
+Some action: [demo.pipencoder.com](url)
