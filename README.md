@@ -5,3 +5,5 @@ Create your custom pipelines using your favorite CLI media tools.
 Mix and match open-soure and commercial software in your workflow.
 
 Project comes with AngularJS GUI and FFMPEG powerful presets out of the box.
+
+Demo: demo.pipencoder.com
